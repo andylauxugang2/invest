@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.UserNotifyMessageDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.UserNotifyMessage">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="message_id" property="messageId"/>
+        <result column="status" property="status"/>
+        <result column="message_value" property="messageValue"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="UserNotifyMessageResultMap" type="com.invest.ivuser.model.entity.UserNotifyMessage"
+               extends="BaseResultMap">
+        <!-- 继承的属性 -->
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="link" property="link"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, user_id, message_id, message_value, status, is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user_notify_message
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.UserNotifyMessage">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user_notify_message
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <select id="selectListByQuery" resultMap="UserNotifyMessageResultMap"
+            parameterType="com.invest.ivuser.dao.query.UserNotifyMessageQuery">
+        select a.id as id, user_id, message_id, a.status, a.create_time, a.update_time,
+        title, content, type, link
+        from t_user_notify_message as a,t_notify_message as b
+        where a.message_id = b.id
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+        order by id desc
+        <if test="paged">
+            limit #{pageStart},#{pageLimit}
+        </if>
+    </select>
+
+    <select id="selectCountByQuery" resultType="java.lang.Integer"
+            parameterType="com.invest.ivuser.dao.query.UserNotifyMessageQuery">
+        select count(a.id)
+        from t_user_notify_message as a,t_notify_message as b
+        where a.message_id = b.id
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.UserNotifyMessage">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user_notify_message (user_id, message_id, status, message_value, is_delete, create_time, update_time)
+        values (#{userId}, #{messageId} ,#{status}, #{messageValue}, #{isDelete},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateByUserIdAndMessageId" parameterType="com.invest.ivuser.model.entity.UserNotifyMessage">
+        update t_user_notify_message
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where user_id = #{userId} and message_id= #{messageId}
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.invest.ivuser.model.entity.UserNotifyMessage">
+        update t_user_notify_message
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKeySelectiveBatch">
+        update t_user_notify_message
+        <set>
+            <if test="userNotifyMessage.status != null">
+                status = #{userNotifyMessage.status},
+            </if>
+            <if test="userNotifyMessage.updateTime != null">
+                update_time = #{userNotifyMessage.updateTime},
+            </if>
+        </set>
+        where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

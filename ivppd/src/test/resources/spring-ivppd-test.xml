@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd 
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:ivppd.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <context:property-placeholder location="classpath:ivcommons.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+
+    <bean id="keyVersionUtils" class="com.invest.ivppad.util.KeyVersionUtils"/>
+
+    <context:component-scan base-package="com.invest.ivppad.datacache"/>
+    <context:component-scan base-package="com.invest.ivppad.biz"/>
+
+    <!-- test dependences-->
+    <bean class="com.invest.ivppad.util.BaseDataUtil"/>
+    <!-- 基础数据 -->
+    <import resource="classpath:/spring-ivdata.xml" />
+    <!-- redis -->
+    <import resource="classpath:spring-redis.xml" />
+
+    <context:property-placeholder location="classpath:*.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+
+    <!-- 通用中间件 ivpush -->
+    <context:component-scan base-package="com.invest.ivpush" />
+    <import resource="classpath:/ivpush/spring-datasource.xml" />
+    <import resource="classpath:/ivpush/mybatis.xml" />
+
+    <!-- 会员系统 -->
+    <context:property-placeholder location="classpath:ivuser.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <context:component-scan base-package="com.invest.ivuser" />
+    <bean class="com.invest.ivuser.util.KeyVersionUtils"/>
+
+    <import resource="classpath:/ivuser.config/ivuser-spring-datasource.xml" />
+    <import resource="classpath:/ivuser.config/mybatis.xml" />
+    <import resource="classpath:/ivuser.config/ivuser-spring-mq.xml" />
+
+    <!-- spring restful -->
+    <import resource="classpath:spring-restful.xml" />
+    <import resource="classpath:spring-restful-ppdopenapi.xml" />
+
+</beans>

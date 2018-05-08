@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       default-autowire="byName">
+
+    <!-- 数据源配置 dbcp -->
+    <bean id="ivpushDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${ivpush.jdbc.driverClassName}"/>
+        <property name="url" value="jdbc:mysql://${ivpush.jdbc.address}?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=false"/>
+        <property name="username" value="${ivpush.jdbc.username}"/>
+        <property name="password" value="${ivpush.jdbc.password}"/>
+        <!-- Connection Pooling Info -->
+        <property name="initialSize" value="${ivpush.cpool.initialSize}" />
+        <property name="maxActive" value="${ivpush.cpool.maxActive}" />
+        <property name="maxIdle" value="${ivpush.cpool.maxIdle}" />
+        <property name="maxWait" value="${ivpush.cpool.maxWait}" />
+        <property name="poolPreparedStatements" value="${ivpush.cpool.poolPreparedStatements}" />
+        <property name="defaultAutoCommit" value="${ivpush.cpool.defaultAutoCommit}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${ivpush.cpool.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${ivpush.cpool.minEvictableIdleTimeMillis}"/>
+    </bean>
+</beans>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://getahead.org/dwr/dwr20.dtd">
+<!-- 通用dwr配置 -->
+
+<dwr>
+	<allow>
+		<!-- 指定针对于特定对象的转换器 -->
+		<convert converter="bean" match="java.lang.RuntimeException" />
+		<convert converter="bean" match="java.lang.StackTraceElement" />
+		<convert converter="bean" match="com.invest.ivmanager.model.ListRange" />
+		<convert converter="bean" match="com.invest.ivcommons.base.result.Result" />
+		<convert converter="bean" match="com.invest.ivmanager.model.result.UserManagerResult" />
+		<convert converter="bean" match="com.invest.ivuser.model.entity.LoanPolicy" />
+		<convert converter="bean" match="com.invest.ivmanager.model.vo.LoanPolicyVO" />
+		<convert converter="bean" match="com.invest.ivmanager.model.request.LoanPolicyReq" />
+		<convert converter="bean" match="com.invest.ivmanager.model.request.SaveLoanPolicyReq" />
+		<convert converter="bean" match="com.invest.ivmanager.model.request.UserReq" />
+		<convert converter="bean" match="com.invest.ivuser.model.entity.User" />
+
+		<convert match="java.lang.Throwable" converter="bean">
+			<param name="include" value="message"></param>
+		</convert>
+
+		<!-- 建立JS对象，将目标对象的方法转换成JS对象的方法 -->
+		<create creator="spring" javascript="loanPolicyService">
+			<param name="beanName" value="loanPolicyService" />
+		</create>
+
+		<!-- 建立JS对象，将目标对象的方法转换成JS对象的方法 -->
+		<create creator="spring" javascript="ivmanagerUserService">
+			<param name="beanName" value="ivmanagerUserService" />
+		</create>
+
+		<!--<create javascript="xxSrv" creator="new">
+			<param name="class" value="services.xxxxServices"></param>
+		</create>
+		&lt;!&ndash; 从Spring中获取Java对象 &ndash;&gt;
+		<create javascript="xxSrv" creator="spring">
+			<param name="beanName" value="xxxxServices"></param>
+			&lt;!&ndash; 禁止执行 &ndash;&gt;
+			<exclude method="deleteDept" />
+		</create>-->
+
+	</allow>
+</dwr>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.UserThirdBindInfoDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.UserThirdBindInfo">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="thrid_user_uuid" property="thirdUserUUID"/>
+        <result column="expired_time" property="expiredTime"/>
+        <result column="access_token" property="accessToken"/>
+        <result column="refresh_token" property="refreshToken"/>
+        <result column="open_id" property="openID"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, user_id, thrid_user_uuid,
+    access_token, refresh_token, open_id, expired_time, is_delete, create_time, update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_third_bind_info
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.UserThirdBindInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_third_bind_info
+        where 1=1
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="thirdUserUUID != null">
+            and thrid_user_uuid = #{thirdUserUUID}
+        </if>
+        <if test="expiredTime != null">
+            and <![CDATA[ expired_time <= #{expiredTime}]]>
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+        order by id asc
+    </select>
+
+    <select id="selectAllThirdUUIDList" resultType="string" parameterType="com.invest.ivuser.model.entity.UserThirdBindInfo">
+        select thrid_user_uuid
+        from ivuser_third_bind_info
+        where 1=1
+        <!--<![CDATA[ and expired_time >= now() ]]>-->
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="thirdUserUUID != null">
+            and thrid_user_uuid = #{thirdUserUUID}
+        </if>
+        group by thrid_user_uuid
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ivuser_third_bind_info
+    where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.UserThirdBindInfo">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ivuser_third_bind_info (user_id, thrid_user_uuid, access_token, refresh_token, open_id, expired_time, create_time, update_time)
+        values (#{userId}, #{thirdUserUUID}, #{accessToken}, #{refreshToken}, #{openID}, #{expiredTime}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.invest.ivuser.model.entity.UserThirdBindInfo">
+        update ivuser_third_bind_info
+        <set>
+            <if test="expiredTime != null">
+                expired_time = #{expiredTime},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="accessToken != null">
+                access_token = #{accessToken},
+            </if>
+            <if test="refreshToken != null">
+                refresh_token = #{refreshToken},
+            </if>
+            <if test="openID != null">
+                open_id = #{openID},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByUserIdAndThirdUserUUID" parameterType="com.invest.ivuser.model.entity.UserThirdBindInfo">
+        update ivuser_third_bind_info
+        <set>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="expiredTime != null">
+                expired_time = #{expiredTime},
+            </if>
+            <if test="accessToken != null">
+                access_token = #{accessToken},
+            </if>
+            <if test="refreshToken != null">
+                refresh_token = #{refreshToken},
+            </if>
+            <if test="openID != null">
+                open_id = #{openID},
+            </if>
+        </set>
+        where user_id = #{userId} and thrid_user_uuid = #{thirdUserUUID}
+    </update>
+
+</mapper>

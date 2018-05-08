@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.LoanPolicyDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.LoanPolicy">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="name" property="name"/>
+        <result column="policy_type" property="policyType"/>
+        <result column="risk_level" property="riskLevel"/>
+        <result column="valid_time" property="validTime"/>
+        <result column="status" property="status"/>
+        <result column="month_begin" property="monthBegin"/>
+        <result column="month_end" property="monthEnd"/>
+        <result column="rate_begin" property="rateBegin"/>
+        <result column="rate_end" property="rateEnd"/>
+        <result column="amount_begin" property="amountBegin"/>
+        <result column="amount_end" property="amountEnd"/>
+        <result column="age_begin" property="ageBegin"/>
+        <result column="age_end" property="ageEnd"/>
+        <result column="sex" property="sex"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="third_auth_info" property="thirdAuthInfo"/>
+        <result column="certificate" property="certificate"/>
+        <result column="study_style" property="studyStyle"/>
+        <result column="graduate_school_type" property="graduateSchoolType"/>
+        <result column="loaner_success_count_begin" property="loanerSuccessCountBegin"/>
+        <result column="loaner_success_count_end" property="loanerSuccessCountEnd"/>
+        <result column="waste_count_begin" property="wasteCountBegin"/>
+        <result column="waste_count_end" property="wasteCountEnd"/>
+        <result column="normal_count_begin" property="normalCountBegin"/>
+        <result column="normal_count_end" property="normalCountEnd"/>
+        <result column="overdue_less_count_begin" property="overdueLessCountBegin"/>
+        <result column="overdue_less_count_end" property="overdueLessCountEnd"/>
+        <result column="overdue_more_count_begin" property="overdueMoreCountBegin"/>
+        <result column="overdue_more_count_end" property="overdueMoreCountEnd"/>
+        <result column="total_principal_begin" property="totalPrincipalBegin"/>
+        <result column="total_principal_end" property="totalPrincipalEnd"/>
+        <result column="owing_principal_begin" property="owingPrincipalBegin"/>
+        <result column="owing_principal_end" property="owingPrincipalEnd"/>
+        <result column="amount_to_receive_begin" property="amountToReceiveBegin"/>
+        <result column="amount_to_receive_end" property="amountToReceiveEnd"/>
+        <result column="last_success_borrowdays_begin" property="lastSuccessBorrowDaysBegin"/>
+        <result column="last_success_borrowdays_end" property="lastSuccessBorrowDaysEnd"/>
+        <result column="register_borrow_months_begin" property="registerBorrowMonthsBegin"/>
+        <result column="register_borrow_months_end" property="registerBorrowMonthsEnd"/>
+        <result column="amount_owing_total_begin" property="amountOwingTotalBegin"/>
+        <result column="amount_owing_total_end" property="amountOwingTotalEnd"/>
+        <result column="owing_highest_debt_ratio_begin" property="owingHighestDebtRatioBegin"/>
+        <result column="owing_highest_debt_ratio_end" property="owingHighestDebtRatioEnd"/>
+        <result column="amt_debt_rat_bg" property="amtDebtRatBg"/>
+        <result column="amt_debt_rat_ed" property="amtDebtRatEd"/>
+        <result column="total_flag" property="totalFlag"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, name, policy_type,risk_level,valid_time, status,age_begin,age_end,sex,
+        month_begin,month_end,rate_begin,rate_end,amount_begin,amount_end,
+        credit_code,third_auth_info,certificate,study_style,graduate_school_type,
+        loaner_success_count_begin,loaner_success_count_end,waste_count_begin,waste_count_end,normal_count_begin,normal_count_end,
+        overdue_less_count_begin,overdue_less_count_end,overdue_more_count_begin,overdue_more_count_end,
+        total_principal_begin,total_principal_end,owing_principal_begin,owing_principal_end,
+        amount_to_receive_begin,amount_to_receive_end,last_success_borrowdays_begin,last_success_borrowdays_end,register_borrow_months_begin,register_borrow_months_end,
+        amount_owing_total_begin,amount_owing_total_end,
+        owing_highest_debt_ratio_begin,owing_highest_debt_ratio_end,amt_debt_rat_bg,amt_debt_rat_ed,
+        total_flag,
+        is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="name != null">
+            and name = #{name}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="policyType != null">
+            and policy_type = #{policyType}
+        </if>
+        <if test="riskLevel != null">
+            and risk_level = #{riskLevel}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_policy
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap" parameterType="com.invest.ivuser.model.entity.LoanPolicy">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_policy
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from t_loan_policy
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.LoanPolicy">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_loan_policy (name, user_id,valid_time, policy_type,risk_level,status,age_begin,age_end,sex,
+        month_begin,month_end,rate_begin,rate_end,amount_begin,amount_end,
+        credit_code,third_auth_info,certificate,study_style,graduate_school_type,
+        loaner_success_count_begin,loaner_success_count_end,waste_count_begin,waste_count_end,normal_count_begin,normal_count_end,
+        overdue_less_count_begin,overdue_less_count_end,overdue_more_count_begin,overdue_more_count_end,
+        total_principal_begin,total_principal_end,owing_principal_begin,owing_principal_end,
+        amount_to_receive_begin,amount_to_receive_end,last_success_borrowdays_begin,last_success_borrowdays_end,register_borrow_months_begin,register_borrow_months_end,
+        amount_owing_total_begin,amount_owing_total_end,
+        owing_highest_debt_ratio_begin,owing_highest_debt_ratio_end,amt_debt_rat_bg,amt_debt_rat_ed,
+        total_flag,
+        is_delete, create_time, update_time)
+        values (#{name},#{userId},#{validTime},#{policyType},#{riskLevel},#{status},#{ageBegin},#{ageEnd},#{sex},
+        #{monthBegin}, #{monthEnd},#{rateBegin},#{rateEnd},#{amountBegin},#{amountEnd},
+        #{creditCode},#{thirdAuthInfo},#{certificate},#{studyStyle},#{graduateSchoolType},
+        #{loanerSuccessCountBegin},#{loanerSuccessCountEnd},#{wasteCountBegin},#{wasteCountEnd},#{normalCountBegin},#{normalCountEnd},
+        #{overdueLessCountBegin},#{overdueLessCountEnd},#{overdueMoreCountBegin},#{overdueMoreCountEnd},
+        #{totalPrincipalBegin},#{totalPrincipalEnd},#{owingPrincipalBegin},#{owingPrincipalEnd},
+        #{amountToReceiveBegin},#{amountToReceiveEnd},#{lastSuccessBorrowDaysBegin},#{lastSuccessBorrowDaysEnd},#{registerBorrowMonthsBegin},#{registerBorrowMonthsEnd},
+        #{amountOwingTotalBegin},#{amountOwingTotalEnd},
+        #{owingHighestDebtRatioBegin},#{owingHighestDebtRatioEnd},#{amtDebtRatBg},#{amtDebtRatEd},
+        #{totalFlag},
+        #{isDelete},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivuser.model.entity.LoanPolicy">
+        update t_loan_policy
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+                month_begin = #{monthBegin},
+                month_end = #{monthEnd},
+                rate_begin = #{rateBegin},
+                rate_end = #{rateEnd},
+                amount_begin = #{amountBegin},
+                amount_end = #{amountEnd},
+                age_begin = #{ageBegin},
+                age_end = #{ageEnd},
+                sex = #{sex},
+                credit_code = #{creditCode},
+                third_auth_info = #{thirdAuthInfo},
+                certificate = #{certificate},
+                study_style = #{studyStyle},
+                graduate_school_type = #{graduateSchoolType},
+                loaner_success_count_begin = #{loanerSuccessCountBegin},
+                loaner_success_count_end = #{loanerSuccessCountEnd},
+                waste_count_begin = #{wasteCountBegin},
+                waste_count_end = #{wasteCountEnd},
+                normal_count_begin = #{normalCountBegin},
+                normal_count_end = #{normalCountEnd},
+                overdue_less_count_begin = #{overdueLessCountBegin},
+                overdue_less_count_end = #{overdueLessCountEnd},
+                overdue_more_count_begin = #{overdueMoreCountBegin},
+                overdue_more_count_end = #{overdueMoreCountEnd},
+                total_principal_begin = #{totalPrincipalBegin},
+                total_principal_end = #{totalPrincipalEnd},
+                owing_principal_begin = #{owingPrincipalBegin},
+                owing_principal_end = #{owingPrincipalEnd},
+                amount_to_receive_begin = #{amountToReceiveBegin},
+                amount_to_receive_end = #{amountToReceiveEnd},
+                last_success_borrowdays_begin = #{lastSuccessBorrowDaysBegin},
+                last_success_borrowdays_end = #{lastSuccessBorrowDaysEnd},
+                register_borrow_months_begin = #{registerBorrowMonthsBegin},
+                register_borrow_months_end = #{registerBorrowMonthsEnd},
+                amount_owing_total_begin = #{amountOwingTotalBegin},
+                amount_owing_total_end = #{amountOwingTotalEnd},
+                owing_highest_debt_ratio_begin = #{owingHighestDebtRatioBegin},
+                owing_highest_debt_ratio_end = #{owingHighestDebtRatioEnd},
+                amt_debt_rat_bg = #{amtDebtRatBg},
+                amt_debt_rat_ed = #{amtDebtRatEd},
+                total_flag = #{totalFlag}
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateCommonByPrimaryKey" parameterType="com.invest.ivuser.model.entity.LoanPolicy">
+        update t_loan_policy
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.invest.ivuser.model.entity.LoanPolicy">
+        update t_loan_policy
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="validTime != null">
+                valid_time = #{validTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="batchDeleteByPrimaryKeys" parameterType="java.lang.Long">
+        delete from t_loan_policy
+        where id in
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="batchUpdateDeletedByPrimaryKeys" parameterType="java.lang.Long">
+        update t_loan_policy
+        set is_delete = 1
+        where id in
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+
+    <!--==================================================================关联查询======================================================================-->
+
+    <resultMap id="UserPolicyDetailResultMap" type="com.invest.ivuser.model.entity.ext.UserPolicyDetail"
+               extends="BaseResultMap">
+        <result column="user_policy_id" property="userPolicyId"/>
+        <result column="third_user_uuid" property="thirdUserUUID"/>
+        <result column="bid_amount" property="bidAmount"/>
+        <result column="user_policy_status" property="userPolicyStatus"/>
+        <result column="user_policy_create_time" property="userPolicyCreateTime"/>
+    </resultMap>
+
+    <select id="selectUserPolicyLeftJoinLoanPolicy" resultMap="UserPolicyDetailResultMap">
+        select a.id as user_policy_id,a.third_user_uuid,bid_amount,a.status as user_policy_status,
+        b.id as id,a.user_id, name, valid_time,policy_type,risk_level,b.status,age_begin,age_end,sex,
+        month_begin,month_end,rate_begin,rate_end,amount_begin,amount_end,
+        credit_code,third_auth_info,certificate,study_style,graduate_school_type,
+        loaner_success_count_begin,loaner_success_count_end,waste_count_begin,waste_count_end,normal_count_begin,normal_count_end,
+        overdue_less_count_begin,overdue_less_count_end,overdue_more_count_begin,overdue_more_count_end,
+        total_principal_begin,total_principal_end,owing_principal_begin,owing_principal_end,
+        amount_to_receive_begin,amount_to_receive_end,last_success_borrowdays_begin,last_success_borrowdays_end,register_borrow_months_begin,register_borrow_months_end,
+        amount_owing_total_begin,amount_owing_total_end,
+        owing_highest_debt_ratio_begin,owing_highest_debt_ratio_end,amt_debt_rat_bg,amt_debt_rat_ed,
+        total_flag,
+        a.create_time as user_policy_create_time
+        from
+        <!-- 解除绑定授权的排除掉 -->
+        (ivuser_policy as a left join t_loan_policy as b on a.policy_id = b.id ) left join ivuser_third_bind_info as c
+        on a.user_id = c.user_id and a.third_user_uuid = c.thrid_user_uuid
+        where c.id is not null
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        <if test="thirdUserUUID != null">
+            and a.third_user_uuid = #{thirdUserUUID}
+        </if>
+        <if test="policyType != null">
+            and b.policy_type = #{policyType}
+        </if>
+        <if test="riskLevel != null">
+            and b.risk_level = #{riskLevel}
+        </if>
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+        <if test="policyId != null">
+            and b.id = #{policyId}
+        </if>
+        and b.is_delete = 0
+        order by a.id desc
+    </select>
+
+</mapper>

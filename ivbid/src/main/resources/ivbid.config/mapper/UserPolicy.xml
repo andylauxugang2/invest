@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhuobao.ivbid.dao.h2.UserPolicyDAO">
+    <resultMap id="BaseResultMap" type="com.zhuobao.ivbid.model.entity.UserPolicy">
+        <id column="id" property="id"/>
+        <result column="type" property="type"/>
+        <result column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="policy_id" property="policyId"/>
+        <result column="month_begin" property="monthBegin"/>
+        <result column="month_end" property="monthEnd"/>
+        <result column="amount_begin" property="amountBegin"/>
+        <result column="amount_end" property="amountEnd"/>
+        <result column="rate_begin" property="rateBegin"/>
+        <result column="rate_end" property="rateEnd"/>
+        <result column="age_begin" property="ageBegin"/>
+        <result column="age_end" property="ageEnd"/>
+        <result column="sex" property="sex"/>
+        <result column="loaner_success_count_begin" property="loanerSuccessCountBegin"/>
+        <result column="loaner_success_count_end" property="loanerSuccessCountEnd"/>
+        <result column="waste_count_begin" property="wasteCountBegin"/>
+        <result column="waste_count_end" property="wasteCountEnd"/>
+        <result column="normal_count_begin" property="normalCountBegin"/>
+        <result column="normal_count_end" property="normalCountEnd"/>
+        <result column="overdue_less_count_begin" property="overdueLessCountBegin"/>
+        <result column="overdue_less_count_end" property="overdueLessCountEnd"/>
+        <result column="overdue_more_count_begin" property="overdueMoreCountBegin"/>
+        <result column="overdue_more_count_end" property="overdueMoreCountEnd"/>
+        <result column="total_principal_begin" property="totalPrincipalBegin"/>
+        <result column="total_principal_end" property="totalPrincipalEnd"/>
+        <result column="owing_principal_begin" property="owingPrincipalBegin"/>
+        <result column="owing_principal_end" property="owingPrincipalEnd"/>
+        <result column="amount_to_receive_begin" property="amountToReceiveBegin"/>
+        <result column="amount_to_receive_end" property="amountToReceiveEnd"/>
+        <result column="amount_owing_total_begin" property="amountOwingTotalBegin"/>
+        <result column="amount_owing_total_end" property="amountOwingTotalEnd"/>
+        <result column="last_success_borrowdays_begin" property="lastSuccessBorrowDaysBegin"/>
+        <result column="last_success_borrowdays_end" property="lastSuccessBorrowDaysEnd"/>
+        <result column="register_borrow_months_begin" property="registerBorrowMonthsBegin"/>
+        <result column="register_borrow_months_end" property="registerBorrowMonthsEnd"/>
+
+        <result column="owing_highest_debt_ratio_begin" property="owingHighestDebtRatioBegin"/>
+        <result column="owing_highest_debt_ratio_end" property="owingHighestDebtRatioEnd"/>
+        <result column="amt_debt_rat_bg" property="amtDebtRatBg"/>
+        <result column="amt_debt_rat_ed" property="amtDebtRatEd"/>
+
+        <result column="creditcode_flag" property="creditCode"/>
+        <result column="thirdauthinfo_flag" property="thirdAuthInfo"/>
+        <result column="certificate_flag" property="certificate"/>
+        <result column="studystyle_flag" property="studyStyle"/>
+        <result column="graduateschooltype_flag" property="graduateSchoolType"/>
+
+        <result column="bid_amount" property="bidAmount"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id, type, user_id,username,policy_id,
+      age_begin,age_end,sex,
+      month_begin,month_end,rate_begin,rate_end,amount_begin,amount_end,
+      loaner_success_count_begin,loaner_success_count_end,waste_count_begin,waste_count_end,normal_count_begin,normal_count_end,
+      overdue_less_count_begin,overdue_less_count_end,overdue_more_count_begin,overdue_more_count_end,
+      total_principal_begin,total_principal_end,owing_principal_begin,owing_principal_end,
+      amount_to_receive_begin,amount_to_receive_end,last_success_borrowdays_begin,last_success_borrowdays_end,register_borrow_months_begin,register_borrow_months_end,
+      amount_owing_total_begin,amount_owing_total_end,
+      owing_highest_debt_ratio_begin,owing_highest_debt_ratio_end,amt_debt_rat_bg,amt_debt_rat_ed,
+      creditcode_flag,thirdauthinfo_flag,certificate_flag,studystyle_flag,graduateschooltype_flag,
+      bid_amount
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="type != null">
+            and type = #{type}
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user_policy
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.zhuobao.ivbid.model.entity.UserPolicy">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user_policy
+        where 1=1
+        <include refid="Condition_Base"/>
+    </select>
+
+    <select id="selectOneByUniqueKey" resultMap="BaseResultMap">
+        select * from t_user_policy
+        where user_id = #{userId} and username=#{username} and policy_id = #{policyId}
+    </select>
+
+    <select id="selectListByQuery" resultMap="BaseResultMap"
+            parameterType="com.zhuobao.ivbid.dao.h2.query.UserPolicyQuery">
+        select
+        id, type, user_id,username,bid_amount,policy_id
+        from t_user_policy
+        where 1=1
+        and <![CDATA[#{month} >= month_begin and #{month} <= month_end]]>
+        and <![CDATA[#{rate} >= rate_begin and #{rate} <= rate_end]]>
+        and <![CDATA[#{amount} >= amount_begin and #{amount} <= amount_end]]>
+        and BITAND(#{thirdAuthInfo},thirdauthinfo_flag) = thirdauthinfo_flag
+        <choose>
+            <when test="creditCode == 0">
+                and creditcode_flag = 0
+            </when>
+            <otherwise>
+                and (creditcode_flag = 0 or BITAND(creditcode_flag,#{creditCode}) = #{creditCode})
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="certificate == 0">
+                and certificate_flag = 0
+            </when>
+            <otherwise>
+                and (certificate_flag = 0 or BITAND(certificate_flag,#{certificate}) = #{certificate})
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="studyStyle == 0">
+                and studystyle_flag = 0
+            </when>
+            <otherwise>
+                and (studystyle_flag = 0 or BITAND(studystyle_flag,#{studyStyle}) = #{studyStyle})
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="graduateSchoolType == 0">
+                and graduateschooltype_flag = 0
+            </when>
+            <otherwise>
+                and (graduateschooltype_flag = 0 or BITAND(graduateschooltype_flag,#{graduateSchoolType}) =
+                #{graduateSchoolType})
+            </otherwise>
+        </choose>
+        <if test="sex != null">
+            and (sex = #{sex} or sex is null)
+        </if>
+        <!-- 如果年龄取不到,即使策略有限制,也算匹配上 -->
+        <if test="age != null">
+            and <![CDATA[#{age} >= age_begin and #{age} <= age_end]]>
+        </if>
+        <if test="loanerSuccessCount != null">
+            and
+            <![CDATA[#{loanerSuccessCount} >= loaner_success_count_begin and #{loanerSuccessCount} <= loaner_success_count_end]]>
+        </if>
+        <if test="wasteCount != null">
+            and <![CDATA[#{wasteCount} >= waste_count_begin and #{wasteCount} <= waste_count_end]]>
+        </if>
+        <if test="normalCount != null">
+            and <![CDATA[#{normalCount} >= normal_count_begin and #{normalCount} <= normal_count_end]]>
+        </if>
+        <if test="overdueLessCount != null">
+            and
+            <![CDATA[#{overdueLessCount} >= overdue_less_count_begin and #{overdueLessCount} <= overdue_less_count_end]]>
+        </if>
+        <if test="overdueMoreCount != null">
+            and
+            <![CDATA[#{overdueMoreCount} >= overdue_more_count_begin and #{overdueMoreCount} <= overdue_more_count_end]]>
+        </if>
+        <if test="totalPrincipal != null">
+            and <![CDATA[#{totalPrincipal} >= total_principal_begin and #{totalPrincipal} <= total_principal_end]]>
+        </if>
+        <if test="owingPrincipal != null">
+            and <![CDATA[#{owingPrincipal} >= owing_principal_begin and #{owingPrincipal} <= owing_principal_end]]>
+        </if>
+        <if test="amountToReceive != null">
+            and
+            <![CDATA[#{amountToReceive} >= amount_to_receive_begin and #{amountToReceive} <= amount_to_receive_end]]>
+        </if>
+        <if test="lastSuccessBorrowDays != null">
+            and
+            <![CDATA[#{lastSuccessBorrowDays} >= last_success_borrowdays_begin and #{lastSuccessBorrowDays} <= last_success_borrowdays_end]]>
+        </if>
+        <if test="registerBorrowMonths != null">
+            and
+            <![CDATA[#{registerBorrowMonths} >= register_borrow_months_begin and #{registerBorrowMonths} <= register_borrow_months_end]]>
+        </if>
+        <if test="amountOwingTotal != null">
+            and
+            <![CDATA[#{amountOwingTotal} >= amount_owing_total_begin and #{amountOwingTotal} <= amount_owing_total_end]]>
+        </if>
+        <choose>
+            <when test="owingHighestDebtRatio == null">
+                and owing_highest_debt_ratio_begin = 0 and owing_highest_debt_ratio_end = 10
+            </when>
+            <otherwise>
+                and
+                <![CDATA[#{owingHighestDebtRatio} >= owing_highest_debt_ratio_begin and #{owingHighestDebtRatio} <= owing_highest_debt_ratio_end]]>
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="amtDebtRat == null">
+                and amt_debt_rat_bg = 0 and amt_debt_rat_ed = 10
+            </when>
+            <otherwise>
+                and
+                <![CDATA[#{amtDebtRat} >= amt_debt_rat_bg and #{amtDebtRat} <= amt_debt_rat_ed]]>
+            </otherwise>
+        </choose>
+
+        <!--<choose>
+            <when test="owingHighestDebtRatio == null">
+                and owing_highest_debt_ratio_begin is null and owing_highest_debt_ratio_end is null
+            </when>
+            <otherwise>
+                <![CDATA[
+                and (
+                  (owing_highest_debt_ratio_begin is null and owing_highest_debt_ratio_end is null)
+                  or (#{owingHighestDebtRatio} >= owing_highest_debt_ratio_begin and owing_highest_debt_ratio_end is null)
+                  or (owing_highest_debt_ratio_begin is null and #{owingHighestDebtRatio} <= owing_highest_debt_ratio_end)
+                  or (#{owingHighestDebtRatio} >= owing_highest_debt_ratio_begin and #{owingHighestDebtRatio} <= owing_highest_debt_ratio_end)
+                )
+                ]]>
+            </otherwise>
+        </choose>-->
+
+        order by type desc
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_user_policy
+    where id = #{id}
+    </delete>
+
+    <delete id="deleteByUniqueKey" parameterType="java.util.Map">
+        delete from t_user_policy
+        where user_id = #{userId} and username=#{username} and policy_id = #{policyId}
+    </delete>
+
+    <update id="updateByUniqueKey" parameterType="java.util.Map">
+        update t_user_policy
+        <set>
+            <if test="bidAmount != null">
+                bid_amount = #{bidAmount},
+            </if>
+        </set>
+        where user_id = #{userId} and username = #{username} and policy_id = #{policyId}
+    </update>
+
+    <insert id="insert" parameterType="com.zhuobao.ivbid.model.entity.UserPolicy">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_user_policy (type,user_id,username,policy_id,
+        age_begin,age_end,sex,
+        month_begin,month_end,rate_begin,rate_end,amount_begin,amount_end,
+        loaner_success_count_begin,loaner_success_count_end,waste_count_begin,waste_count_end,normal_count_begin,normal_count_end,
+        overdue_less_count_begin,overdue_less_count_end,overdue_more_count_begin,overdue_more_count_end,
+        total_principal_begin,total_principal_end,owing_principal_begin,owing_principal_end,
+        amount_to_receive_begin,amount_to_receive_end,last_success_borrowdays_begin,last_success_borrowdays_end,register_borrow_months_begin,register_borrow_months_end,
+        amount_owing_total_begin,amount_owing_total_end,
+        owing_highest_debt_ratio_begin,owing_highest_debt_ratio_end,amt_debt_rat_bg,amt_debt_rat_ed,
+        creditcode_flag,thirdauthinfo_flag,certificate_flag,studystyle_flag,graduateschooltype_flag,
+        bid_amount)
+        values (#{type},#{userId},#{username},#{policyId},
+        #{ageBegin},#{ageEnd},#{sex},
+        #{monthBegin}, #{monthEnd},#{rateBegin},#{rateEnd},#{amountBegin},#{amountEnd},
+        #{loanerSuccessCountBegin},#{loanerSuccessCountEnd},#{wasteCountBegin},#{wasteCountEnd},#{normalCountBegin},#{normalCountEnd},
+        #{overdueLessCountBegin},#{overdueLessCountEnd},#{overdueMoreCountBegin},#{overdueMoreCountEnd},
+        #{totalPrincipalBegin},#{totalPrincipalEnd},#{owingPrincipalBegin},#{owingPrincipalEnd},
+        #{amountToReceiveBegin},#{amountToReceiveEnd},#{lastSuccessBorrowDaysBegin},#{lastSuccessBorrowDaysEnd},#{registerBorrowMonthsBegin},#{registerBorrowMonthsEnd},
+        #{amountOwingTotalBegin},#{amountOwingTotalEnd},
+        #{owingHighestDebtRatioBegin},#{owingHighestDebtRatioEnd},#{amtDebtRatBg},#{amtDebtRatEd},
+        #{creditCode},#{thirdAuthInfo},#{certificate},#{studyStyle},#{graduateSchoolType},
+        #{bidAmount})
+    </insert>
+
+    <update id="updateByUniqueKeySelective" parameterType="com.zhuobao.ivbid.model.entity.UserPolicy">
+        update t_user_policy
+        <set>
+            <if test="ageBegin != null">
+                age_begin = #{ageBegin},
+            </if>
+            <if test="ageEnd != null">
+                age_end = #{ageEnd},
+            </if>
+            <if test="monthBegin != null">
+                month_begin = #{monthBegin},
+            </if>
+            <if test="monthEnd != null">
+                month_end = #{monthEnd},
+            </if>
+            <if test="rateBegin != null">
+                rate_begin = #{rateBegin},
+            </if>
+            <if test="rateEnd != null">
+                rate_end = #{rateEnd},
+            </if>
+            <if test="amountBegin != null">
+                amount_begin = #{amountBegin},
+            </if>
+            <if test="amountEnd != null">
+                amount_end = #{amountEnd},
+            </if>
+            <if test="loanerSuccessCountBegin != null">
+                loaner_success_count_begin = #{loanerSuccessCountBegin},
+            </if>
+            <if test="loanerSuccessCountEnd != null">
+                loaner_success_count_end = #{loanerSuccessCountEnd},
+            </if>
+            <if test="wasteCountBegin != null">
+                waste_count_begin = #{wasteCountBegin},
+            </if>
+            <if test="wasteCountEnd != null">
+                waste_count_end = #{wasteCountEnd},
+            </if>
+            <if test="normalCountBegin != null">
+                normal_count_begin = #{normalCountBegin},
+            </if>
+            <if test="normalCountEnd != null">
+                normal_count_end = #{normalCountEnd},
+            </if>
+            <if test="overdueLessCountBegin != null">
+                overdue_less_count_begin = #{overdueLessCountBegin},
+            </if>
+            <if test="overdueLessCountEnd != null">
+                overdue_less_count_end = #{overdueLessCountEnd},
+            </if>
+
+            <if test="overdueMoreCountBegin != null">
+                overdue_more_count_begin = #{overdueMoreCountBegin},
+            </if>
+            <if test="overdueMoreCountEnd != null">
+                overdue_more_count_end = #{overdueMoreCountEnd},
+            </if>
+            <if test="totalPrincipalBegin != null">
+                total_principal_begin = #{totalPrincipalBegin},
+            </if>
+            <if test="totalPrincipalEnd != null">
+                total_principal_end = #{totalPrincipalEnd},
+            </if>
+            <if test="owingPrincipalBegin != null">
+                owing_principal_begin = #{owingPrincipalBegin},
+            </if>
+            <if test="owingPrincipalEnd != null">
+                owing_principal_end = #{owingPrincipalEnd},
+            </if>
+            <if test="amountToReceiveBegin != null">
+                amount_to_receive_begin = #{amountToReceiveBegin},
+            </if>
+            <if test="amountToReceiveEnd != null">
+                amount_to_receive_end = #{amountToReceiveEnd},
+            </if>
+
+            <if test="lastSuccessBorrowDaysBegin != null">
+                last_success_borrowdays_begin = #{lastSuccessBorrowDaysBegin},
+            </if>
+            <if test="lastSuccessBorrowDaysEnd != null">
+                last_success_borrowdays_end = #{lastSuccessBorrowDaysEnd},
+            </if>
+            <if test="registerBorrowMonthsBegin != null">
+                register_borrow_months_begin = #{registerBorrowMonthsBegin},
+            </if>
+            <if test="registerBorrowMonthsEnd != null">
+                register_borrow_months_end = #{registerBorrowMonthsEnd},
+            </if>
+
+            <if test="amountOwingTotalBegin != null">
+                amount_owing_total_begin = #{amountOwingTotalBegin},
+            </if>
+            <if test="amountOwingTotalEnd != null">
+                amount_owing_total_end = #{amountOwingTotalEnd},
+            </if>
+            <if test="owingHighestDebtRatioBegin != null">
+                owing_highest_debt_ratio_begin = #{owingHighestDebtRatioBegin},
+            </if>
+            <if test="owingHighestDebtRatioEnd != null">
+                owing_highest_debt_ratio_end = #{owingHighestDebtRatioEnd},
+            </if>
+            <if test="amtDebtRatBg != null">
+                amt_debt_rat_bg = #{amtDebtRatBg},
+            </if>
+            <if test="amtDebtRatEd != null">
+                amt_debt_rat_ed = #{amtDebtRatEd},
+            </if>
+            <if test="creditCode != null">
+                creditcode_flag = #{creditCode},
+            </if>
+            <if test="thirdAuthInfo != null">
+                thirdauthinfo_flag = #{thirdAuthInfo},
+            </if>
+            <if test="certificate != null">
+                certificate_flag = #{certificate},
+            </if>
+            <if test="studyStyle != null">
+                studystyle_flag = #{studyStyle},
+            </if>
+            <if test="graduateSchoolType != null">
+                graduateschooltype_flag = #{graduateSchoolType},
+            </if>
+            <if test="bidAmount != null">
+                bid_amount = #{bidAmount},
+            </if>
+            sex = #{sex}
+        </set>
+        where user_id = #{userId} and username = #{username} and policy_id = #{policyId}
+    </update>
+
+    <!--age_begin = #{ageBegin},
+    age_end = #{ageEnd},
+    month_begin = #{monthBegin},
+    month_end = #{monthEnd},
+    rate_begin = #{rateBegin},
+    rate_end = #{rateEnd},
+    amount_begin = #{amountBegin},
+    amount_end = #{amountEnd},
+    loaner_success_count_begin = #{loanerSuccessCountBegin},
+    loaner_success_count_end = #{loanerSuccessCountEnd},
+    waste_count_begin = #{wasteCountBegin},
+    waste_count_end = #{wasteCountEnd},
+    normal_count_begin = #{normalCountBegin},
+    normal_count_end = #{normalCountEnd},
+    overdue_less_count_begin = #{overdueLessCountBegin},
+    overdue_less_count_end = #{overdueLessCountEnd},
+    overdue_more_count_begin = #{overdueMoreCountBegin},
+    overdue_more_count_end = #{overdueMoreCountEnd},
+    total_principal_begin = #{totalPrincipalBegin},
+    total_principal_end = #{totalPrincipalEnd},
+    owing_principal_begin = #{owingPrincipalBegin},
+    owing_principal_end = #{owingPrincipalEnd},
+    amount_to_receive_begin = #{amountToReceiveBegin},
+    amount_to_receive_end = #{amountToReceiveEnd},
+    last_success_borrowdays_begin = #{lastSuccessBorrowDaysBegin},
+    last_success_borrowdays_end = #{lastSuccessBorrowDaysEnd},
+    creditcode_flag = #{creditCode},
+    thirdauthinfo_flag = #{thirdAuthInfo},
+    certificate_flag = #{certificate},
+    studystyle_flag = #{studyStyle},
+    graduateschooltype_flag = #{graduateSchoolType},
+    bid_amount = #{bidAmount},
+    sex = #{sex}-->
+
+</mapper>

@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package model;
+
+option java_package = "";
+option java_outer_classname = "PPDUserAccessTokenProtos";
+
+message PPDUserAccessToken {
+  required string accessToken = 1;
+  required int32 expiresIn = 2;
+  optional string refreshToken = 3;
+}

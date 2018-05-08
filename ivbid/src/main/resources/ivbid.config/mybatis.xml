@@ -1,0 +1,61 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+    <import resource="classpath:spring-ivbid-datasource.xml"/>
+
+    <!-- 初始化数据表结构 -->
+    <!--<jdbc:initialize-database data-source="ivbidH2DataSource" ignore-failures="ALL">
+        <jdbc:script location="classpath:ivbid/config/h2dbinit.sql" encoding="UTF-8"/>
+    </jdbc:initialize-database>-->
+
+    <!--<bean id="h2Init" class="org.springframework.jdbc.datasource.init.ResourceDatabasePopulator">
+        <property name="sqlScriptEncoding" value="UTF-8"/>
+        <property name="scripts">
+            <list>
+                <value>classpath:ivbid/config/h2dbinit.sql</value>
+            </list>
+        </property>
+        <property name="continueOnError" value="true"/>
+    </bean>
+
+    <bean id="mInitializer" class="org.springframework.jdbc.datasource.init.DataSourceInitializer">
+        <property name="dataSource">
+            <ref bean="ivbidH2DataSource"/>
+        </property>
+        <property name="databasePopulator">
+            <ref bean="h2Init"/>
+        </property>
+        <property name="enabled" value="true"/>
+    </bean>-->
+
+    <bean id="ivbidH2TransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="ivbidH2DataSource" />
+    </bean>
+
+    <tx:annotation-driven transaction-manager="ivbidH2TransactionManager" />
+
+    <bean id="ivbidH2SqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="ivbidH2DataSource" />
+        <property name="configLocation" value="classpath:ivbid.config/mybatis-configuration.xml"/>
+        <property name="mapperLocations">
+            <list>
+                <value>classpath:ivbid.config/mapper/*.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="ivbidH2SqlSessionFactory"/>
+        <property name="basePackage" value="com.zhuobao.ivbid.dao"/>
+    </bean>
+
+
+</beans>

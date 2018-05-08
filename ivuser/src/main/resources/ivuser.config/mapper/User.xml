@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.UserDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="referrer_mobile" property="referrerMobile" jdbcType="VARCHAR"/>
+        <result column="nick" property="nick" jdbcType="VARCHAR"/>
+        <result column="register_source" property="registerSource" jdbcType="VARCHAR"/>
+        <result column="user_token" property="userToken" jdbcType="VARCHAR"/>
+        <result column="security_key" property="securityKey" jdbcType="VARCHAR"/>
+        <result column="head_img_org" property="headImgOrg" jdbcType="VARCHAR"/>
+        <result column="head_img" property="headImg" jdbcType="VARCHAR"/>
+        <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP"/>
+        <result column="is_delete" property="isDelete" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, mobile, password, security_key, referrer_mobile, nick, register_source,user_token,head_img_org,head_img,
+    is_delete, last_login_time, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="mobile != null">
+            and mobile like concat(concat('%',#{mobile}),'%')
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectOneBySelective" resultMap="BaseResultMap" parameterType="com.invest.ivuser.model.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_user
+        where 1=1
+        <if test="mobile != null">
+            and mobile = #{mobile}
+        </if>
+        <if test="password != null">
+            and password = #{password}
+        </if>
+        limit 1
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_user
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ivuser_user
+    where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.User">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ivuser_user (mobile, password, referrer_mobile,
+        nick, register_source,user_token,security_key,head_img_org,head_img,
+        create_time,update_time)
+        values (#{mobile,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{referrerMobile,jdbcType=VARCHAR},
+        #{nick,jdbcType=VARCHAR}, #{registerSource,jdbcType=VARCHAR}, #{userToken,jdbcType=VARCHAR}, #{securityKey,jdbcType=VARCHAR},
+        "","",
+        #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.invest.ivuser.model.entity.User">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ivuser_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="referrerMobile != null">
+                referrer_mobile,
+            </if>
+            <if test="nick != null">
+                nick,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="referrerMobile != null">
+                #{referrer_mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="nick != null">
+                #{nick,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.invest.ivuser.model.entity.User">
+        update ivuser_user
+        <set>
+            <if test="mobile != null">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="securityKey != null">
+                security_key = #{securityKey,jdbcType=VARCHAR},
+            </if>
+            <if test="referrerMobile != null">
+                referrer_mobile = #{referrerMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="nick != null">
+                nick = #{nick,jdbcType=VARCHAR},
+            </if>
+            <if test="registerSource != null">
+                register_source = #{registerSource,jdbcType=VARCHAR},
+            </if>
+            <if test="userToken != null">
+                user_token = #{userToken,jdbcType=VARCHAR},
+            </if>
+            <if test="headImgOrg != null">
+                head_img_org = #{headImgOrg,jdbcType=VARCHAR},
+            </if>
+            <if test="headImg != null">
+                head_img = #{headImg,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLoginTime != null">
+                last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivuser.model.entity.User">
+    update ivuser_user
+    set mobile = #{mobile,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      moreferrer_mobilebile = #{referrerMobile,jdbcType=VARCHAR},
+      nick = #{nick,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd"
+       default-autowire="byName">
+
+    <!-- resource 注入要指定id -->
+    <bean id="ivbidH2DataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${ivbid.jdbc.driverClassName.h2}"/>
+        <!--<property name="url" value="${ivbid.jdbc.address.h2};DB_CLOSE_DELAY=-1;MODE=MYSQL;INIT=create schema if not exists h2db\;SET SCHEMA h2db;AUTO_SERVER=TRUE"/> -->
+        <property name="url" value="${ivbid.jdbc.address.h2};INIT=create schema if not exists h2db"/>
+        <property name="username" value="${ivbid.jdbc.username.h2}"/>
+        <property name="password" value="${ivbid.jdbc.password.h2}"/>
+        <property name="maxActive" value="${ivbid.cpool.maxActive.h2}"/>
+    </bean>
+</beans>

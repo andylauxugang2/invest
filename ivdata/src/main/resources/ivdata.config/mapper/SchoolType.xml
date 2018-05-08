@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivdata.dao.SchoolTypeDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivdata.model.entity.SchoolType">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="sub_type" property="subType"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, name, type, sub_type,
+    is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="name != null">
+            and name = #{name}
+        </if>
+        <if test="type != null">
+            and type = #{type}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_school_type
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap" parameterType="com.invest.ivdata.model.entity.SchoolType">
+        select
+        <include refid="Base_Column_List"/>
+        from t_school_type
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd"
+	   default-autowire="no" default-lazy-init="true">
+
+	<!-- datasource -->
+	<import resource="classpath:/dao.persistence/datasource-ivmanager.xml" />
+
+	<!-- Mybatis ivmanager 数据源 -->
+	<!-- Mybatis SqlSessionFactory -->
+
+	<bean id="ivmanagerSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ivmanagerDataSource" />
+		<property name="configLocation" value="classpath:dao/mybatis-configuration.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:dao/mapper/*.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 非spring事务管理 -->
+
+	<!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->
+	<bean id="ivmanagerMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="ivmanagerSqlSessionFactory"></property>
+		<property name="basePackage" value="com.invest.ivmanager.biz.dao" />
+	</bean>
+
+</beans>

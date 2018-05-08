@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.BidAnalysisDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.BidAnalysis">
+        <id column="id" property="id"/>
+        <result column="month" property="month"/>
+        <result column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="bid_count_total" property="bidCountTotal"/>
+        <result column="bid_amount_total" property="bidAmountTotal"/>
+        <result column="bid_rate_avg" property="bidRateAvg"/>
+        <result column="bid_month_avg" property="bidMonthAvg"/>
+        <result column="bid_age_avg" property="bidAgeAvg"/>
+        <result column="bid_lender_count_avg" property="bidLenderCountAvg"/>
+        <result column="overdue_10_days" property="overdue10Days"/>
+        <result column="overdue_10_total" property="overdue10Total"/>
+        <result column="overdue_30_days" property="overdue30Days"/>
+        <result column="overdue_30_total" property="overdue30Total"/>
+        <result column="overdue_60_days" property="overdue60Days"/>
+        <result column="overdue_60_total" property="overdue60Total"/>
+        <result column="overdue_90_days" property="overdue90Days"/>
+        <result column="overdue_90_total" property="overdue90Total"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.BidAnalysis">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_bid_analysis (
+        month,user_id,username,
+        bid_count_total,bid_amount_total,bid_rate_avg,bid_month_avg,bid_age_avg,bid_lender_count_avg,
+        is_delete, create_time, update_time)
+        values
+        (#{month},#{userId},#{username},
+        #{bidCountTotal},#{bidAmountTotal},#{bidRateAvg},#{bidMonthAvg},#{bidAgeAvg},#{bidLenderCountAvg},
+        #{isDelete},#{createTime},#{updateTime})
+    </insert>
+
+    <sql id="Base_Column_List">
+        id, month, user_id, username,
+        bid_count_total,bid_amount_total,bid_rate_avg,bid_month_avg,bid_age_avg,bid_lender_count_avg,
+        overdue_10_days,overdue_10_total,overdue_30_days,overdue_30_total,overdue_60_days,overdue_60_total,overdue_90_days,overdue_90_total,
+        is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="username != null">
+            and username = #{username}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_bid_analysis
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.BidAnalysis">
+        select
+        <include refid="Base_Column_List"/>
+        from t_bid_analysis
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id
+    </select>
+
+    <select id="selectSummaryRecordLoanDetail" resultMap="BaseResultMap">
+        select date_format(a.create_time,'%Y-%m') as month,user_id,username,
+        count(*) as bid_count_total,sum(a.participation_amount) as bid_amount_total,
+        avg(rate) as bid_rate_avg,avg(months) as bid_month_avg,avg(age) as bid_age_avg,avg(lender_count) as bid_lender_count_avg
+        from ivuser_loan_record as a,t_loan_detail as b
+        WHERE a.loan_id = b.listing_id
+        <if test="createTimeBegin != null">
+            <![CDATA[and a.create_time >=#{createTimeBegin}]]>
+        </if>
+        <if test="createTimeEnd != null">
+            <![CDATA[and a.create_time < #{createTimeEnd}]]>
+        </if>
+        group by date_format(a.create_time,'%Y-%m'),user_id,username
+    </select>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivuser.model.entity.BidAnalysis">
+        update t_bid_analysis
+        <set>
+            <if test="overdue10Days != null">
+                overdue_10_days = #{overdue10Days},
+            </if>
+            <if test="overdue30Days != null">
+                overdue_30_days = #{overdue30Days},
+            </if>
+            <if test="overdue60Days != null">
+                overdue_60_days = #{overdue60Days},
+            </if>
+            <if test="overdue90Days != null">
+                overdue_90_days = #{overdue90Days},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByUniqueKey" parameterType="java.util.Map">
+        delete from t_bid_analysis
+        where user_id = #{userId} and username = #{username} and month = #{month}
+    </delete>
+
+    <!-- 以下都是增量更新 -->
+    <update id="updateByUniqueKey" parameterType="com.invest.ivuser.model.entity.BidAnalysis">
+        update t_bid_analysis
+        <set>
+            <if test="overdue10Days != null">
+                overdue_10_days = overdue_10_days + #{overdue10Days},
+            </if>
+            <if test="overdue10Total != null">
+                overdue_10_total = overdue_10_total + #{overdue10Total},
+            </if>
+            <if test="overdue30Days != null">
+                overdue_30_days = overdue_30_days + #{overdue30Days},
+            </if>
+            <if test="overdue30Total != null">
+                overdue_30_total = overdue_30_total + #{overdue30Total},
+            </if>
+            <if test="overdue60Days != null">
+                overdue_60_days = overdue_60_days + #{overdue60Days},
+            </if>
+            <if test="overdue60Total != null">
+                overdue_60_total = overdue_60_total + #{overdue60Total},
+            </if>
+            <if test="overdue90Days != null">
+                overdue_90_days = overdue_90_days + #{overdue90Days},
+            </if>
+            <if test="overdue90Total != null">
+                overdue_90_total = overdue_90_total + #{overdue90Total},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where user_id = #{userId} and username = #{username} and month = #{month}
+    </update>
+</mapper>

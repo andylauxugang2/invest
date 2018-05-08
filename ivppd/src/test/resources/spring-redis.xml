@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+    <bean id="cacheClientHA" class="com.invest.ivcommons.redis.client.cacheclient.CacheClientHA">
+        <constructor-arg name="address" value="127.0.0.1"/>
+        <constructor-arg name="port" value="6379"/>
+        <constructor-arg name="password" value=""/>
+        <constructor-arg name="timeout" value="5000"/>
+        <constructor-arg name="needThrowException" value="true"/>
+    </bean>
+
+    <bean id="ppdCacheClientHA" class="com.invest.ivcommons.redis.client.cacheclient.CacheClientHA">
+        <constructor-arg name="address" value="127.0.0.1"/>
+        <constructor-arg name="port" value="6379"/>
+        <constructor-arg name="password" value=""/>
+        <constructor-arg name="timeout" value="5000"/>
+        <constructor-arg name="needThrowException" value="true"/>
+    </bean>
+
+</beans>

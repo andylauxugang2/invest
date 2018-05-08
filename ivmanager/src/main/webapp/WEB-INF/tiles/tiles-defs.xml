@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<!-- 前端页面模板 -->
+	<definition name="def.template" template="/WEB-INF/templates/template.jsp"></definition>
+	<definition name="def.template1" template="/WEB-INF/templates/template1.jsp"></definition>
+
+	<!-- 引用整体模板  视图名 + .page  -->
+	<!--<definition name="*.page" extends="template_page" >
+		<put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
+	</definition>-->
+
+	<definition name="show.portal" extends="def.template"/>
+
+	<definition name="show.loanpolicylist" extends="def.template1">
+		<put-attribute name="content" value="/WEB-INF/views/loanpolicy/loanpolicylist.jsp" />
+	</definition>
+
+	<definition name="show.userlist" extends="def.template1">
+		<put-attribute name="content" value="/WEB-INF/views/user/userlist.jsp" />
+	</definition>
+
+</tiles-definitions>

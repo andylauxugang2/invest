@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.BizOptLogDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.BizOptLog">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="biz_id" property="bizId"/>
+        <result column="opt_type" property="optType"/>
+        <result column="status" property="status"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, biz_id, opt_type,status,
+        is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_biz_opt_log
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.BizOptLog">
+        select
+        <include refid="Base_Column_List"/>
+        from t_biz_opt_log
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from t_biz_opt_log
+        where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.BizOptLog">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_biz_opt_log (user_id, biz_id, opt_type,status,
+        is_delete, create_time, update_time)
+        values (#{userId},#{bizId},#{optType},#{status},
+        #{isDelete},#{createTime},#{updateTime})
+    </insert>
+</mapper>

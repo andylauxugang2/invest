@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="ivuserMQProducer" class="com.invest.ivuser.mq.MyDefaultMQProducer" init-method="start" destroy-method="shutdown">
+        <!-- ip:port;ip2:port2 -->
+        <property name="namesrvAddr" value="${ivuser.mq.namesrvAddr}"/>
+        <!-- producerGroup需要由应用来保证唯一,发送分布式事务消息时用到,服务器会回查这个Group下的任意一个Producer -->
+        <property name="producerGroup" value="${ivuser.mq.producerGroup}"/>
+        <!-- Timeout for sending messages -->
+        <property name="sendMsgTimeout" value="${ivuser.mq.sendMsgTimeout}"/>
+    </bean>
+
+    <!-- 散标策略缓存同步消息,包括系统和自定义散标策略 -->
+    <bean id="userLoanPolicyProducer" class="com.invest.ivuser.mq.producer.UserLoanPolicyProducer">
+        <property name="topic" value="${ivuser.mq.topic.userloanpolicy}"/>
+        <property name="tag" value="${ivuser.mq.tag}"/>
+    </bean>
+</beans>

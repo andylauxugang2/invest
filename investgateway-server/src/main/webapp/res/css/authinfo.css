@@ -1,0 +1,68 @@
+.news_search {
+    padding: 10px 10px;
+}
+
+.layui-table, .layui-table th {
+    text-align: center;
+}
+
+.news_list .layui-form-switch {
+    margin-top: 0;
+}
+
+/*分页*/
+#page {
+    text-align: right;
+}
+
+.layui-form-switch {
+    position: relative;
+    height: 22px;
+    line-height: 22px;
+    width: 52px;
+    padding: 0 5px;
+    margin-top: 0px;
+    border: 1px solid #d2d2d2;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #fff;
+    -webkit-transition: .1s linear;
+    transition: .1s linear;
+}
+.layui-form-onswitch {
+    border-color: #5FB878;
+    background-color: #5FB878;
+}
+
+/*layui.css:2*/
+.layui-form-checkbox, .layui-form-checkbox *, .layui-form-radio, .layui-form-radio *, .layui-form-switch {
+    display: inline-block;
+    vertical-align: middle;
+}
+/*layui.css:2*/
+.layui-border-box, .layui-border-box * {
+    box-sizing: border-box;
+}
+
+/*layui.css:2*/
+.layui-btn, .layui-disabled, .layui-icon, .layui-unselect {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+
+/*layui.css:2*/
+blockquote, body, button, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, input, li, ol, p, pre, td, textarea, th, ul {
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+/*user agent stylesheet*/
+div {
+    display: block;
+}
+
+::selection {
+    background: #FF6C60;
+    color: #fff;
+}

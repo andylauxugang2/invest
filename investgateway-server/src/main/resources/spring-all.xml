@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    <!-- Activates annotation-based bean configuration -->
+    <context:annotation-config />
+
+    <context:property-placeholder location="classpath:*.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+
+    <!-- Scans for application @Components to deploy -->
+    <!-- 通用中间件 ivpush -->
+    <context:property-placeholder location="classpath:ivpush.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <context:component-scan base-package="com.invest.ivpush" />
+    <import resource="classpath:/ivpush/spring-datasource.xml" />
+    <import resource="classpath:/ivpush/mybatis.xml" />
+
+    <!-- 通用中间件 security -->
+    <context:component-scan base-package="com.invest.ivcommons.security" />
+
+    <!-- 通用中间件 validator -->
+    <context:component-scan base-package="com.invest.ivcommons.validate" />
+
+    <!-- 基础数据 -->
+    <import resource="classpath:/spring-ivdata.xml" />
+
+    <!-- 会员系统 -->
+    <context:property-placeholder location="classpath:ivuser.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <context:component-scan base-package="com.invest.ivusergateway" />
+    <context:component-scan base-package="com.invest.ivuser.biz" />
+    <bean class="com.invest.ivuser.util.KeyVersionUtils"/>
+
+    <import resource="classpath:/ivuser.config/ivuser-spring-datasource.xml" />
+    <import resource="classpath:/ivuser.config/mybatis.xml" />
+    <import resource="classpath:/ivuser.config/ivuser-spring-mq.xml" />
+
+    <import resource="classpath:/ivusergateway.config/spring-session.xml" />
+
+    <!-- 支付系统 -->
+    <import resource="classpath:/spring-ivpay.xml" />
+
+    <!-- ppd系统 -->
+    <context:property-placeholder location="classpath:ivppd.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <bean id="keyVersionUtils" class="com.invest.ivppad.util.KeyVersionUtils"/>
+    <context:component-scan base-package="com.invest.ivppad.biz.manager"/>
+    <context:component-scan base-package="com.invest.ivppad.biz.service"/>
+    <bean class="com.invest.ivppad.datacache.PPDAccessTokenDataCache"/>
+    <bean class="com.invest.ivppad.util.BaseDataUtil"/>
+
+    <import resource="classpath:/spring-ivppdgateway.xml" />
+
+    <!-- redis -->
+    <import resource="classpath:/redis/spring-redis.xml" />
+    <!-- spring mvc -->
+    <import resource="classpath:/mvc/spring-mvc.xml" />
+    <!-- spring restful -->
+    <import resource="classpath:/restful/spring-restful.xml" />
+    <import resource="classpath:/restful/spring-restful-ppdopenapi.xml" />
+</beans>

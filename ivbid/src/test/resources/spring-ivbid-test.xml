@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd 
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config />
+    <context:property-placeholder location="classpath:ivcommons.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+
+    <!-- 通用中间件 ivpush -->
+    <context:component-scan base-package="com.invest.ivpush" />
+    <import resource="classpath:/ivpush/spring-datasource.xml" />
+    <import resource="classpath:/ivpush/mybatis.xml" />
+
+    <!-- 基础数据 -->
+    <import resource="classpath:/spring-ivdata.xml" />
+
+    <!-- 会员系统 -->
+    <context:property-placeholder location="classpath:ivuser.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <context:component-scan base-package="com.invest.ivuser" />
+    <bean class="com.invest.ivuser.util.KeyVersionUtils"/>
+
+    <import resource="classpath:/ivuser.config/ivuser-spring-datasource.xml" />
+    <import resource="classpath:/ivuser.config/mybatis.xml" />
+    <import resource="classpath:/ivuser.config/ivuser-spring-mq.xml" />
+
+    <!-- ppd api -->
+    <!-- ppd api restful 可根据上游系统配置-->
+    <import resource="classpath:restful/spring-restful.xml"/>
+    <import resource="classpath:restful/spring-restful-ppdopenapi.xml"/>
+    <import resource="classpath:spring-ivppd.xml"/>
+
+    <!-- Spring中h2 TCP Server 配置 -->
+    <bean id="h2Server" class="org.h2.tools.Server"
+          factory-method="createTcpServer" init-method="start" destroy-method="stop">
+        <constructor-arg value="-tcp,-tcpAllowOthers,-tcpPort,9093" />
+    </bean>
+
+    <!-- 注意扫描顺序 -->
+    <!-- 先要初始化 dbinit-->
+    <context:component-scan base-package="com.zhuobao.ivbid.dao"/>
+    <context:component-scan base-package="com.zhuobao.ivbid.datacache"/>
+    <context:component-scan base-package="com.zhuobao.ivbid.biz"/>
+    <context:component-scan base-package="com.zhuobao.ivbid.processor"/>
+
+    <import resource="classpath:ivbid.config/mybatis.xml"/>
+
+    <!-- redis -->
+    <import resource="classpath:/redis/spring-redis.xml" />
+
+    <bean id="testMQProducer" class="com.zhuobao.ivbid.mq.TestMQProducer">
+        <property name="topic" value="ivbatch_get_loanable_detail"/>
+        <!--<property name="topic" value="ivbatch_get_loanable_detail"/>-->
+        <property name="tag" value="*"/>
+    </bean>
+
+    <!-- PushConsumer 使用方式给用户感觉是消息从RocketMQ服务器推到了应用客户端。但是实际PushConsumer内部是使用长轮询Pull方式从Broker拉消息，然后再回调用户Listener方法 -->
+    <bean id="ivppdMQConsumer" class="com.zhuobao.ivbid.mq.consumer.PPDConsumer" init-method="init">
+        <!-- ip:port;ip2:port2 -->
+        <property name="namesrvAddr" value="${ivbid.mq.namesrvAddr}"/>
+        <!-- consumerGroup需要由应用来保证唯一 -->
+        <property name="consumerGroup" value="${ivbid.mq.consumerGroup}"/>
+        <property name="topic" value="${ivbid.mq.topic.loanaledetail}"/>
+        <property name="tag" value="${ivbid.mq.tag.loanaledetail}"/>
+    </bean>
+
+    <!-- 散标策略同步缓存MQ消费 包括系统和自定义散标策略 -->
+    <bean id="ivuserLoanPolicyMQConsumer" class="com.zhuobao.ivbid.mq.consumer.UserLoanPolicyConsumer" init-method="init">
+        <!-- ip:port;ip2:port2 -->
+        <property name="namesrvAddr" value="${ivuser.mq.namesrvAddr}"/>
+        <!-- consumerGroup需要由应用来保证唯一 -->
+        <property name="consumerGroup" value="${ivuser.mq.consumerGroup.loanpolicy}"/>
+        <property name="topic" value="${ivuser.mq.topic.loanpolicy}"/>
+        <property name="tag" value="${ivuser.mq.tag.loanpolicy}"/>
+    </bean>
+
+    <!-- 消费下载过的散标详情信息 -->
+    <!--<bean id="ivppdLoanDetailConsumer" class="com.invest.ivppad.mq.consumer.PPDLoanDetailConsumer" init-method="init">
+        &lt;!&ndash; ip:port;ip2:port2 &ndash;&gt;
+        <property name="namesrvAddr" value="${ivppd.mq.namesrvAddr}"/>
+        &lt;!&ndash; consumerGroup需要由应用来保证唯一 &ndash;&gt;
+        <property name="consumerGroup" value="${ivppd.mq.consumerGroup.analysis}"/>
+        <property name="topic" value="${ivppd.mq.topic.loanaledetail}"/>
+        <property name="tag" value="${ivppd.mq.tag.loanaledetail}"/>
+    </bean>-->
+</beans>

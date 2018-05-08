@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.LoanDetailDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.LoanDetail">
+        <id column="id" property="id"/>
+        <result column="listing_id" property="listingId"/>
+        <result column="fist_bid_time" property="fistBidTime"/>
+        <result column="last_bid_time" property="lastBidTime"/>
+        <result column="lender_count" property="lenderCount"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="amount" property="amount"/>
+        <result column="months" property="months"/>
+        <result column="rate" property="rate"/>
+        <result column="borrow_name" property="borrowName"/>
+        <result column="gender" property="gender"/>
+        <result column="age" property="age"/>
+        <result column="education_degree" property="educationDegree"/>
+        <result column="graduate_school" property="graduateSchool"/>
+        <result column="study_style" property="studyStyle"/>
+        <result column="success_count" property="successCount"/>
+        <result column="waste_count" property="wasteCount"/>
+        <result column="cancel_count" property="cancelCount"/>
+        <result column="failed_count" property="failedCount"/>
+        <result column="normal_count" property="normalCount"/>
+        <result column="overdueless_count" property="overdueLessCount"/>
+        <result column="overduemore_count" property="overdueMoreCount"/>
+        <result column="owing_principal" property="owingPrincipal"/>
+        <result column="owing_amount" property="owingAmount"/>
+        <result column="amount_to_receive" property="amountToReceive"/>
+        <result column="first_success_borrow_time" property="firstSuccessBorrowTime"/>
+        <result column="last_success_borrow_time" property="lastSuccessBorrowTime"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="highest_principal" property="highestPrincipal"/>
+        <result column="highest_debt" property="highestDebt"/>
+        <result column="total_principal" property="totalPrincipal"/>
+        <result column="thirdauth_flag" property="thirdAuthFlag"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, listing_id, fist_bid_time, last_bid_time,lender_count,credit_code,amount,months,rate,borrow_name,gender,age,
+        education_degree,graduate_school,study_style,
+        success_count,waste_count,cancel_count,failed_count,normal_count,overdueless_count,overduemore_count,
+        owing_principal,owing_amount,amount_to_receive,first_success_borrow_time,last_success_borrow_time,register_time,
+        highest_principal,highest_debt,total_principal,thirdauth_flag,
+        is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_detail
+        where id = #{id}
+    </select>
+
+    <select id="selectByListingId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_detail
+        where listing_id = #{listingId}
+        limit 1
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.LoanDetail">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_detail
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.LoanDetail">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_loan_detail (
+        listing_id,fist_bid_time,last_bid_time,lender_count,credit_code,amount,months,rate,borrow_name,gender,age,
+        education_degree,graduate_school,study_style,
+        success_count,waste_count,cancel_count,failed_count,normal_count,overdueless_count,overduemore_count,
+        owing_principal,owing_amount,amount_to_receive,
+        first_success_borrow_time,last_success_borrow_time,register_time,
+        highest_principal,highest_debt,total_principal,
+        thirdauth_flag,
+        is_delete,create_time,update_time)
+        values
+        (#{listingId},#{fistBidTime},#{lastBidTime},#{lenderCount},#{creditCode},#{amount},#{months},#{rate},#{borrowName},#{gender},#{age},
+        #{educationDegree},#{graduateSchool},#{studyStyle},
+        #{successCount},#{wasteCount},#{cancelCount},#{failedCount},#{normalCount},#{overdueLessCount},#{overdueMoreCount},
+        #{owingPrincipal},#{owingAmount},#{amountToReceive},
+        #{firstSuccessBorrowTime},#{lastSuccessBorrowTime},#{registerTime},
+        #{highestPrincipal},#{highestDebt},#{totalPrincipal},
+        #{thirdAuthFlag},
+        #{isDelete},#{createTime},#{updateTime})
+    </insert>
+</mapper>

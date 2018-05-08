@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd"
+       default-autowire="byName">
+
+    <!-- 数据源配置 dbcp -->
+    <bean id="ivbatchDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${ivbatch.jdbc.driverClassName}"/>
+        <property name="url"
+                  value="jdbc:mysql://${ivbatch.jdbc.address}?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=false"/>
+        <property name="username" value="${ivbatch.jdbc.username}"/>
+        <property name="password" value="${ivbatch.jdbc.password}"/>
+        <!-- Connection Pooling Info -->
+        <property name="initialSize" value="${ivbatch.cpool.initialSize}"/>
+        <property name="maxActive" value="${ivbatch.cpool.maxActive}"/>
+        <property name="maxIdle" value="${ivbatch.cpool.maxIdle}"/>
+        <property name="maxWait" value="${ivbatch.cpool.maxWait}"/>
+        <property name="poolPreparedStatements" value="${ivbatch.cpool.poolPreparedStatements}"/>
+        <property name="defaultAutoCommit" value="${ivbatch.cpool.defaultAutoCommit}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${ivbatch.cpool.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${ivbatch.cpool.minEvictableIdleTimeMillis}"/>
+    </bean>
+</beans>

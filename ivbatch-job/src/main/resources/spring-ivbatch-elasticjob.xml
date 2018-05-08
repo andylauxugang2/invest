@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:reg="http://www.dangdang.com/schema/ddframe/reg"
+       xmlns:job="http://www.dangdang.com/schema/ddframe/job"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd 
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context.xsd 
+                        http://www.dangdang.com/schema/ddframe/reg 
+                        http://www.dangdang.com/schema/ddframe/reg/reg.xsd 
+                        http://www.dangdang.com/schema/ddframe/job 
+                        http://www.dangdang.com/schema/ddframe/job/job.xsd
+                        ">
+
+    <!-- Activates annotation-based bean configuration -->
+    <context:annotation-config />
+    <context:property-placeholder location="classpath:ivcommons.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+
+    <!-- 基础数据 -->
+    <import resource="classpath:/spring-ivdata.xml" />
+
+    <!-- ppd api -->
+    <context:property-placeholder location="classpath:ivppd.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <bean id="keyVersionUtils" class="com.invest.ivppad.util.KeyVersionUtils"/>
+    <bean id="schoolTypeDataCache" class="com.invest.ivdata.datacache.SchoolTypeDataCache"/>
+    <bean id="baseDataUtil" class="com.invest.ivppad.util.BaseDataUtil"/>
+    <bean id="ppdOpenApiLoanListManager" class="com.invest.ivppad.biz.manager.PPDOpenApiLoanListManager"/>
+
+    <!-- redis -->
+    <import resource="classpath:/redis/spring-redis.xml" />
+    <!-- spring restful -->
+    <import resource="classpath:/restful/spring-restful.xml" />
+    <import resource="classpath:/restful/spring-restful-ppdopenapi.xml" />
+
+    <context:component-scan base-package="com.invest.ivbatch.biz"/>
+    <context:component-scan base-package="com.invest.ivbatch.job.elastic"/>
+
+    <bean id="ivbatchMQProducer" class="com.invest.ivbatch.mq.MyDefaultMQProducer" init-method="start" destroy-method="shutdown">
+        <!-- ip:port;ip2:port2 -->
+        <property name="namesrvAddr" value="${ivbatch.mq.namesrvAddr}"/>
+        <!-- producerGroup需要由应用来保证唯一,发送分布式事务消息时用到,服务器会回查这个Group下的任意一个Producer -->
+        <property name="producerGroup" value="${ivbatch.mq.producerGroup}"/>
+        <!-- Timeout for sending messages -->
+        <property name="sendMsgTimeout" value="${ivbatch.mq.sendMsgTimeout}"/>
+    </bean>
+
+    <bean id="loanableDetailProducer" class="com.invest.ivbatch.mq.producer.LoanableDetailProducer">
+        <property name="topic" value="${ivbatch.mq.topic}"/>
+        <property name="tag" value="${ivbatch.mq.tag}"/>
+    </bean>
+
+    <!-- 用逗号分隔集群多机器zk配置 -->
+    <reg:zookeeper id="regCenter" server-lists="${ivbatch.job.elastic.zookeeper}"
+                   namespace="${ivbatch.job.elastic.namespace}"
+                   base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+
+    <!-- 主动下载PPD散标列表 -->
+    <job:simple id="dowloanLoanListJob" class="com.invest.ivbatch.job.elastic.DowloanLoanListJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="* * * * * ? 2099"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="主动下载PPD散标列表job"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>
+
+    <!-- 刷新accessToken -->
+    <!--<job:simple id="refreshAccessTokenJob" class="com.invest.ivbatch.job.elastic.RefreshAccessTokenJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="0 0/30 * * * ?"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="刷新accessToken定时"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>
+
+    &lt;!&ndash; 同步用户余额 &ndash;&gt;
+    <job:simple id="syncUserAccountInfoJob" class="com.invest.ivbatch.job.elastic.SyncUserAccountInfoJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="0 0/1 * * * ?"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="同步用户余额定时"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>
+
+    &lt;!&ndash; 线上测试数据输出 &ndash;&gt;
+    <job:simple id="printDataJob" class="com.invest.ivbatch.job.elastic.PrintDataJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="* * * * * ? 2099"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="线上测试数据输出"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 重试批量下载标的详情 -->
+    <!--<job:simple id="retryDownloadLoanDetailJob" class="com.invest.ivbatch.job.elastic.RetryDownloadLoanDetailJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="0 0 0/1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="重试批量下载标的详情定时"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 批量下载标的还款计划 -->
+    <!--<job:simple id="downloadLenderRepaymentJob" class="com.invest.ivbatch.job.elastic.DownloadLenderRepaymentJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="0 0 0/2 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="批量下载标的还款计划定时"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 批量同步[等待还款]还款计划 每天凌晨1点执行一次 -->
+    <!--<job:simple id="syncWaitingLenderRepaymentJob" class="com.invest.ivbatch.job.elastic.SyncWaitingLenderRepaymentJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="0 0 1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="批量同步[等待还款]还款计划定时"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 批量同步[逾期]还款计划 每天凌晨2点执行一次 -->
+    <!--<job:simple id="syncOverdueLenderRepaymentJob" class="com.invest.ivbatch.job.elastic.SyncOverdueLenderRepaymentJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="0 0 2 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="批量同步[等待还款]还款计划定时"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 投标汇总数据任务 -->
+    <!--<job:simple id="bidAnalysisJob" class="com.invest.ivbatch.job.elastic.BidAnalysisJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivbatch.job.elastic.shardingTotalCount}" cron="0 0 0 1 * ?"
+                sharding-item-parameters="" monitor-execution="${ivbatch.job.elastic.monitorExecution}"
+                monitor-port="${ivbatch.job.elastic.monitorPort}" failover="${ivbatch.job.elastic.failover}" description="投标汇总数据定时"
+                disabled="${ivbatch.job.elastic.disabled}" overwrite="${ivbatch.job.elastic.overwrite}">
+    </job:simple>-->
+</beans>

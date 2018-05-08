@@ -1,0 +1,12 @@
+#
+# robots.txt for http://www.w3.org/
+# eg:http://www.w3.org/robots.txt
+# $Id: robots.txt,v 1.78 2017/01/28 23:42:34 gerald Exp $
+#
+
+# For use by baidu.com etc.
+User-agent: *
+Disallow: /*/account/
+Disallow: /*/invest/
+Disallow: /*/policy/
+Disallow: /*/user/

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivpay.dao.OrderDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivpay.model.entity.Order">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="product_id" property="productId"/>
+        <result column="order_type" property="orderType"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="pay_status" property="payStatus"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="price" property="price"/>
+        <result column="pay_price" property="payPrice"/>
+        <result column="pay_way" property="payway"/>
+        <result column="couponpay_price" property="couponpayPrice"/>
+        <result column="buy_count" property="buyCount"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id,order_no,user_id,product_id,order_type,order_status,pay_status,pay_time,
+    price,pay_price,pay_way,couponpay_price,
+    buy_count,
+    is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="productId != null">
+            and product_id = #{productId}
+        </if>
+        <if test="payStatus != null">
+            and pay_status = #{payStatus}
+        </if>
+        <if test="orderType != null">
+            and order_type = #{orderType}
+        </if>
+    </sql>
+
+    <insert id="insert" parameterType="com.invest.ivpay.model.entity.Order">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_order (order_no,user_id,product_id,order_type,order_status,pay_status,pay_time,
+        price,pay_price,pay_way,couponpay_price,
+        buy_count,
+        create_time, update_time)
+        values (#{orderNo},#{userId},#{productId},#{orderType},#{orderStatus},#{payStatus},#{payTime},
+        #{price},#{payPrice},#{payway},#{couponpayPrice},
+        #{buyCount},
+        #{createTime},
+        #{updateTime})
+    </insert>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivpay.model.entity.Order">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivpay.model.entity.Order">
+        update t_order
+        <set>
+            <if test="payStatus != null">
+                pay_status = #{payStatus},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectListByQuery" resultMap="BaseResultMap"
+            parameterType="com.invest.ivpay.dao.query.UserOrderQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order
+        where user_id = #{userId}
+        <if test="orderType != null">
+            and order_type = #{orderType}
+        </if>
+        <if test="payStatus != null">
+            and pay_status = #{payStatus}
+        </if>
+        <if test="orderBeginTime != null">
+            and <![CDATA[create_time >= #{orderBeginTime}]]>
+        </if>
+        <if test="orderEndTime != null">
+            and <![CDATA[create_time <= #{orderEndTime}]]>
+        </if>
+        order by id desc
+        <if test="paged">
+            limit #{pageStart},#{pageLimit}
+        </if>
+    </select>
+
+    <select id="selectListByNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_order
+        where order_no = #{orderNo}
+    </select>
+
+    <select id="selectCountByQuery" resultType="java.lang.Integer"
+            parameterType="com.invest.ivpay.dao.query.UserOrderQuery">
+        select count(id)
+        from t_order
+        where user_id = #{userId}
+        <if test="orderType != null">
+            and order_type = #{orderType}
+        </if>
+        <if test="payStatus != null">
+            and pay_status = #{payStatus}
+        </if>
+        <if test="orderBeginTime != null">
+            and <![CDATA[create_time >= #{orderBeginTime}]]>
+        </if>
+        <if test="orderEndTime != null">
+            and <![CDATA[create_time <= #{orderEndTime}]]>
+        </if>
+    </select>
+</mapper>

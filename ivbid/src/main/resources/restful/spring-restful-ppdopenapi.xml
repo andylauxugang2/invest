@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       default-autowire="byName" default-lazy-init="true">
+
+    <import resource="spring-restful.xml"/>
+
+    <!-- 带有连接池的 RestTemplate -->
+    <bean id="ppdOpenApiRestTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg ref="clientHttpRequestFactory"/>
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <!-- 如果接口返回结果响应类型为文本等,尝试使用Model类型强转会异常,需要加此配置 -->
+                            <!-- no suitable HttpMessageConverter found for response type [class com.invest.ivppad.model.http.response.PPDOpenApiAuthResponse] and content type [text/html;charset=utf-8] -->
+                            <value>text/plain;charset=utf-8</value>
+                            <value>text/html;charset=utf-8</value>
+                            <!-- Could not write request: no suitable HttpMessageConverter found for request type [org.springframework.util.LinkedMultiValueMap] and content type [application/json;charset=UTF-8] -->
+                            <value>application/json;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+
+</beans>

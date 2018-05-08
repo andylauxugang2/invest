@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivcommons.security.dao.ChannelUrlDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivcommons.security.domain.ChannelUrl">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="channel" property="channel" jdbcType="VARCHAR"/>
+        <result column="url_code" property="urlCode" jdbcType="VARCHAR"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="need_token_auth" property="needTokenAuth" jdbcType="BIT"/>
+        <result column="expired" property="expired" jdbcType="BIT"/>
+        <result column="is_delete" property="isDelete" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, channel, url_code, url, need_token_auth, expired,is_delete, create_time, update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from security_channel_url
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByUrlCodeAndChannel" resultMap="BaseResultMap" parameterType="com.invest.ivcommons.security.domain.ChannelUrl">
+        select
+        <include refid="Base_Column_List"/>
+        from security_channel_url
+        where url_code = #{urlCode} and channel=#{channel} and is_delete=0
+    </select>
+
+    <select id="selectSelective" resultMap="BaseResultMap" parameterType="com.invest.ivcommons.security.domain.ChannelUrl">
+        select
+        <include refid="Base_Column_List"/>
+        from security_channel_url
+        where 1=1
+        <if test="channel != null">
+            and channel = #{channel,jdbcType=VARCHAR}
+        </if>
+        <if test="urlCode != null">
+            and url_code = #{urlCode,jdbcType=VARCHAR}
+        </if>
+        <if test="url != null">
+            and url = #{url,jdbcType=VARCHAR}
+        </if>
+        <if test="needTokenAuth != null">
+            and need_token_auth = #{needTokenAuth,jdbcType=VARCHAR}
+        </if>
+        <if test="expired != null">
+            and expired = #{expired,jdbcType=VARCHAR}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete,jdbcType=BIT}
+        </if>
+        order by id
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from security_channel_url
+    where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.invest.ivcommons.security.domain.ChannelUrl">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into security_channel_url (channel, url_code, url,
+        need_token_auth, expired,create_time,update_time)
+        values (#{channel,jdbcType=VARCHAR}, #{urlCode,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+        #{needTokenAuth,jdbcType=BIT}, #{expired,jdbcType=BIT},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.invest.ivcommons.security.domain.ChannelUrl">
+        update security_channel_url
+        <set>
+            <if test="channel != null">
+                channel = #{channel,jdbcType=VARCHAR},
+            </if>
+            <if test="urlCode != null">
+                url_code = #{urlCode,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                url = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="needTokenAuth != null">
+                need_token_auth = #{needTokenAuth,jdbcType=VARCHAR},
+            </if>
+            <if test="expired != null">
+                expired = #{expired,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=BIT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

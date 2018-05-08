@@ -1,0 +1,325 @@
+.welcome {
+    background-image:url(../images/fam/user_suit.png) !important;
+}
+.logout {
+    background-image:url(../images/icons/logout.png) !important;
+}
+.home {
+    background-image:url(../images/icons/home.gif) !important;
+}
+.add {
+    background-image:url(../images/fam/add.gif) !important;
+}
+.application_go {
+    background-image:url(../images/fam/application_go.png) !important;
+}
+.active {
+    background-image:url(../images/fam/active.gif) !important;
+}
+.cog {
+    background-image:url(../images/fam/cog.png) !important;
+}
+.delete {
+    background-image:url(../images/fam/delete.gif) !important;
+}
+.table_refresh {
+    background-image:url(../images/fam/table_refresh.png) !important;
+}
+.search {
+    background-image:url(../images/icons/search.png) !important;
+}
+.clear {
+    background-image:url(../images/icons/delete.png) !important;
+}
+.save {
+    background-image:url(../images/icons/save.gif) !important;
+}
+.download {
+    background-image:url(../images/icons/download.png) !important;
+}
+.upload {
+    background-image:url(../images/icons/upload.png) !important;
+}
+.import {
+    background-image:url(../images/icons/import.gif) !important;
+}
+.export {
+    background-image:url(../images/icons/export.gif) !important;
+}
+.cmp {
+    background-image:url(../images/icons/cmp.gif) !important;
+}
+.fav {
+    background-image:url(../images/icons/fav.gif) !important;
+}
+.unread {
+    background-image:url(../images/icons/unread.png) !important;
+}
+.folder {
+    background-image:url(../images/icons/folder.gif) !important;
+}
+.hide {
+    background-image:url(../images/icons/hide.gif) !important;
+}
+.print {
+    background-image:url(../images/icons/print.gif) !important;
+}
+.pdf {
+    background-image:url(../images/menus/1day.png) !important;
+}
+.day1 {
+    background-image:url(../images/menus/1day.png) !important;
+}
+.abiword {
+    background-image:url(../images/menus/abiword.png) !important;
+}
+.about {
+    background-image:url(../images/menus/about.png) !important;
+}
+.access {
+    background-image:url(../images/menus/access.gif) !important;
+}
+.accordian {
+    background-image:url(../images/menus/accordian.gif) !important;
+}
+.acroread {
+    background-image:url(../images/menus/acroread.png) !important;
+}
+.addgroup {
+    background-image:url(../images/menus/addgroup.png) !important;
+}
+.addtsk {
+    background-image:url(../images/menus/addtsk.gif) !important;
+}
+.aim {
+    background-image:url(../images/menus/aim.png) !important;
+}
+.aktion {
+    background-image:url(../images/menus/aktion.png) !important;
+}
+.alarmd {
+    background-image:url(../images/menus/alarmd.png) !important;
+}
+.alias {
+    background-image:url(../images/menus/alias.gif) !important;
+}
+.alltopics {
+    background-image:url(../images/menus/alltopics.gif) !important;
+}
+.amsn {
+    background-image:url(../images/menus/amsn.png) !important;
+}
+.ant {
+    background-image:url(../images/menus/ant.gif) !important;
+}
+.application {
+    background-image:url(../images/menus/application.png) !important;
+}
+.applicationedit {
+    background-image:url(../images/menus/applicationedit.png) !important;
+}
+.applicationmagnify {
+    background-image:url(../images/menus/applicationmagnify.png) !important;
+}
+.areacharticon {
+    background-image:url(../images/menus/areacharticon.gif) !important;
+}
+.book {
+    background-image:url(../images/menus/book.png) !important;
+}
+.collapse {
+    background-image:url(../images/menus/collapse.gif) !important;
+}
+.deploy {
+    background-image:url(../images/menus/deploy.gif) !important;
+}
+.docs {
+    background-image:url(../images/menus/docs.gif) !important;
+}
+.editor {
+    background-image:url(../images/menus/editor.png) !important;
+}
+.example {
+    background-image:url(../images/menus/example.gif) !important;
+}
+.expand {
+    background-image:url(../images/menus/expand.gif) !important;
+}
+.eye {
+    background-image:url(../images/menus/eye.png) !important;
+}
+.family {
+    background-image:url(../images/menus/family.png) !important;
+}
+.form {
+    background-image:url(../images/menus/form.png) !important;
+}
+.grid {
+    background-image:url(../images/menus/grid.gif) !important;
+}
+.key {
+    background-image:url(../images/menus/key.png) !important;
+}
+.layer {
+    background-image:url(../images/menus/layer.png) !important;
+}
+.lock {
+    background-image:url(../images/menus/lock.png) !important;
+}
+.member {
+    background-image:url(../images/menus/member.png) !important;
+}
+.members {
+    background-image:url(../images/menus/members.gif) !important;
+}
+.mount {
+    background-image:url(../images/menus/mount.png) !important;
+}
+.presentation {
+    background-image:url(../images/menus/presentation.png) !important;
+}
+.report {
+    background-image:url(../images/menus/report.gif) !important;
+}
+.sheet {
+    background-image:url(../images/menus/sheet.png) !important;
+}
+.tabs {
+    background-image:url(../images/menus/tabs.gif) !important;
+}
+.text {
+    background-image:url(../images/menus/text.png) !important;
+}
+.tool {
+    background-image:url(../images/menus/tool.png) !important;
+}
+.word {
+    background-image:url(../images/menus/word.png) !important;
+}
+
+/* user button styles*/
+.user_add {
+    background-image:url(../images/fam/user_add.png) !important;
+}
+.user_delete {
+    background-image:url(../images/fam/user_delete.png) !important;
+}
+.feed_add {
+    background-image:url(../images/fam/feed_add.png) !important;
+}
+.feed_delete {
+    background-image:url(../images/fam/feed_delete.png) !important;
+}
+.complete .x-tree-node-anchor span {
+	color: #777;
+}
+.complete-line-through .x-tree-node-anchor span {
+	text-decoration: line-through;
+	color: #777;
+}
+/* Ext.form.IconComboBox mandatory styles */
+.x-icon-combo-icon {
+    background-repeat: no-repeat;
+    background-position: 0 50%;
+    width: 18px;
+    height: 14px;
+}
+.x-icon-combo-input {
+    padding-left: 25px;
+}
+.x-form-field-wrap .x-icon-combo-icon {
+    top: 3px;
+    left: 5px;
+}
+.x-icon-combo-item {
+    background-repeat: no-repeat;
+    background-position: 3px 50%;
+    padding-left: 24px;
+    font-size:12px;
+}
+.x-icon-combo-font {
+font-family:tahoma,arial,helvetica,sans-serif;
+font-size:12px;
+font-size-adjust:none;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+line-height:normal;
+}
+/*
+ * FileUploadField component styles
+ */
+/*!
+ * Ext JS Library 3.4.0
+ * Copyright(c) 2006-2011 Sencha Inc.
+ * licensing@sencha.com
+ * http://www.sencha.com/license
+ */
+.x-form-file-wrap {
+    position: relative;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file {
+	position: absolute;
+	right: 0;
+	-moz-opacity: 0;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+    height: 22px;
+}
+.x-form-file-wrap .x-form-file-btn {
+	position: absolute;
+	right: 0;
+	z-index: 1;
+}
+.x-form-file-wrap .x-form-file-text {
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
+}
+.upload-icon {
+  background: url('../images/fam/image_add.png') no-repeat 0 0 !important;
+}
+.ux-form-statictextfield {
+  background: transparent;
+  height: 16px;
+  border: none;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  color: #333;
+}
+#message-alert {display:none;bottom:0px;left:0px!important;width:200px;line-height:20px;position:fixed;border:1px solid #fff;text-align:center;color:red; background:#000;padding:10px}
+
+
+/* style rows on mouseover  ���� status����*/
+.x-grid3-row-over .x-grid3-cell-inner {
+    font-weight: bold;
+}
+.x-grid3-td-status {
+}
+.x-grid3-hd-status {
+    color: #15428B;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+/* combo */
+.x-combo-list-item {
+    zoom:1;
+}
+.x-combo-list-item strong {
+    color:#777;
+    font-size:11px;
+    font-style: normal;
+    float:left;
+}
+/*
+.x-combo-list-item em {
+    color:#222;
+    font-size:12px;
+    font-style: normal;
+    float:left;
+    width:10px;
+}*/

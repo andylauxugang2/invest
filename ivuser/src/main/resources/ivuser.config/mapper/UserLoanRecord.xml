@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.UserLoanRecordDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.UserLoanRecord">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="loan_id" property="loanId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="INTEGER"/>
+        <result column="participation_amount" property="participationAmount" jdbcType="INTEGER"/>
+        <result column="coupon_amount" property="couponAmount" jdbcType="DECIMAL"/>
+        <result column="coupon_status" property="couponStatus" jdbcType="SMALLINT"/>
+        <result column="policy_id" property="policyId" jdbcType="BIGINT"/>
+        <result column="policy_type" property="policyType" jdbcType="SMALLINT"/>
+        <result column="down_detail_flag" property="downDetailFlag" jdbcType="SMALLINT"/>
+        <result column="down_repayment_flag" property="downRepaymentFlag" jdbcType="SMALLINT"/>
+        <result column="is_delete" property="isDelete" jdbcType="BIT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+
+        <result column="policy_name" property="policyName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="UserLoanTotalAmountResultMap" type="com.invest.ivuser.model.entity.ext.LoanTotalCount">
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="bid_count" property="bidCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, loan_id, user_id,amount, participation_amount, coupon_amount, coupon_status,username,policy_id,policy_type,
+    down_detail_flag,down_repayment_flag,
+    is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="username != null">
+            and username = #{username}
+        </if>
+        <if test="downDetailFlag != null">
+            and down_detail_flag = #{downDetailFlag}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <sql id="Condition_Query">
+        <if test="bidLoanBeginTime != null">
+            and <![CDATA[create_time >= #{bidLoanBeginTime}]]>
+        </if>
+        <if test="bidLoanEndTime != null">
+            and <![CDATA[create_time < #{bidLoanEndTime}]]>
+        </if>
+        <if test="username != null">
+            and username = #{username}
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="policyType != null">
+            and policy_type = #{policyType}
+        </if>
+        <if test="downDetailFlag != null">
+            and down_detail_flag = #{downDetailFlag}
+        </if>
+        <if test="downRepaymentFlag != null">
+            and down_repayment_flag = #{downRepaymentFlag}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_loan_record
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from ivuser_loan_record
+    where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.UserLoanRecord">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ivuser_loan_record (
+        loan_id,
+        user_id,
+        amount,
+        participation_amount,
+        coupon_amount,
+        coupon_status,
+        username,
+        policy_id,policy_type,
+        is_delete, create_time, update_time)
+        values (
+        #{loanId,jdbcType=INTEGER},
+        #{userId,jdbcType=BIGINT},
+        #{amount,jdbcType=INTEGER},
+        #{participationAmount,jdbcType=INTEGER},
+        #{couponAmount,jdbcType=DECIMAL},
+        #{couponStatus,jdbcType=SMALLINT},
+        #{username,jdbcType=VARCHAR},
+        #{policyId,jdbcType=BIGINT},#{policyType,jdbcType=SMALLINT},
+        #{isDelete,jdbcType=BIT},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="selectSingleListByQuery" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.dao.query.UserLoanRecordQuery">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_loan_record
+        where 1=1
+        <include refid="Condition_Query"/>
+        order by id desc
+    </select>
+
+    <select id="selectGroupLoanIdByQuery" resultType="java.lang.Integer"
+            parameterType="com.invest.ivuser.dao.query.UserLoanRecordQuery">
+        select loan_id
+        from ivuser_loan_record
+        where 1=1
+        <include refid="Condition_Query"/>
+        group by loan_id
+    </select>
+
+    <select id="selectListByQuery" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.dao.query.UserLoanRecordQuery">
+        select a.*,b.name as policy_name
+        from ivuser_loan_record as a,t_loan_policy as b
+        where a.policy_id = b.id
+        <if test="bidLoanBeginTime != null">
+            and <![CDATA[a.create_time >= #{bidLoanBeginTime}]]>
+        </if>
+        <if test="bidLoanEndTime != null">
+            and <![CDATA[a.create_time <= #{bidLoanEndTime}]]>
+        </if>
+        <if test="username != null">
+            and username = #{username}
+        </if>
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        <if test="loanId != null">
+            and a.loan_id = #{loanId}
+        </if>
+        <if test="policyType != null">
+            and a.policy_type = #{policyType}
+        </if>
+        order by id desc
+        <if test="paged">
+            limit #{pageStart},#{pageLimit}
+        </if>
+    </select>
+
+    <select id="selectCountByQuery" resultType="java.lang.Integer"
+            parameterType="com.invest.ivuser.dao.query.UserLoanRecordQuery">
+        select count(a.id)
+        from ivuser_loan_record as a,t_loan_policy as b
+        where a.policy_id = b.id
+        <if test="bidLoanBeginTime != null">
+            and <![CDATA[a.create_time >= #{bidLoanBeginTime}]]>
+        </if>
+        <if test="bidLoanEndTime != null">
+            and <![CDATA[a.create_time <= #{bidLoanEndTime}]]>
+        </if>
+        <if test="username != null">
+            and username = #{username}
+        </if>
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        <if test="policyType != null">
+            and a.policy_type = #{policyType}
+        </if>
+    </select>
+
+    <select id="selectLoanTotalCount" resultMap="UserLoanTotalAmountResultMap"
+            parameterType="com.invest.ivuser.dao.query.UserLoanRecordQuery">
+        select user_id, username, count(*) as bid_count from ivuser_loan_record
+        where 1=1
+        <if test="bidLoanBeginTime != null">
+            and <![CDATA[create_time >= #{bidLoanBeginTime}]]>
+        </if>
+        <if test="bidLoanEndTime != null">
+            and <![CDATA[create_time < #{bidLoanEndTime}]]>
+        </if>
+        group by user_id, username
+        order by user_id,username;
+    </select>
+
+    <select id="selectLoanTotalCountPolicy" resultMap="UserLoanTotalAmountResultMap"
+            parameterType="com.invest.ivuser.dao.query.UserLoanRecordQuery">
+        select c.policy_type as policy_type,a.policy_id as policy_id,c.name as policy_name,
+        a.user_id as user_id,a.username as username,count(*) as bid_count
+        from ivuser_loan_record as a,ivuser_policy as b,t_loan_policy as c
+        where a.policy_id = b.policy_id and b.policy_id = c.id
+        <if test="bidLoanBeginTime != null">
+            and <![CDATA[a.create_time >= #{bidLoanBeginTime}]]>
+        </if>
+        <if test="bidLoanEndTime != null">
+            and <![CDATA[a.create_time < #{bidLoanEndTime}]]>
+        </if>
+        group by c.policy_type,a.policy_id,c.name,a.user_id,a.username;
+    </select>
+
+    <update id="updateListByLoanId" parameterType="com.invest.ivuser.model.entity.UserLoanRecord">
+        update ivuser_loan_record
+        <set>
+            <if test="downDetailFlag != null">
+                down_detail_flag = #{downDetailFlag},
+            </if>
+            <if test="downRepaymentFlag != null">
+                down_repayment_flag = #{downRepaymentFlag},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where loan_id = #{loanId}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivuser.model.entity.UserLoanRecord">
+        update ivuser_loan_record
+        <set>
+            <if test="downDetailFlag != null">
+                down_detail_flag = #{downDetailFlag},
+            </if>
+            <if test="downRepaymentFlag != null">
+                down_repayment_flag = #{downRepaymentFlag},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

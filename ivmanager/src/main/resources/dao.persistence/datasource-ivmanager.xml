@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+	   default-autowire="no" default-lazy-init="true">
+
+    <!-- 数据源配置 dbcp -->
+    <bean id="ivmanagerDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${ivmanager.jdbc.driverClassName}"/>
+        <property name="url" value="jdbc:mysql://${ivmanager.jdbc.address}?useUnicode=true&amp;characterEncoding=utf-8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=false"/>
+        <property name="username" value="${ivmanager.jdbc.username}"/>
+        <property name="password" value="${ivmanager.jdbc.password}"/>
+        <!-- Connection Pooling Info -->
+        <property name="initialSize" value="${ivmanager.cpool.initialSize}" />
+        <property name="maxActive" value="${ivmanager.cpool.maxActive}" />
+        <property name="maxIdle" value="${ivmanager.cpool.maxIdle}" />
+        <property name="maxWait" value="${ivmanager.cpool.maxWait}" />
+        <property name="poolPreparedStatements" value="${ivmanager.cpool.poolPreparedStatements}" />
+        <property name="defaultAutoCommit" value="${ivmanager.cpool.defaultAutoCommit}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${ivmanager.cpool.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${ivmanager.cpool.minEvictableIdleTimeMillis}"/>
+    </bean>
+
+</beans>

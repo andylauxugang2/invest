@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.UserPolicyDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.UserPolicy">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="third_user_uuid" property="thirdUserUUID"/>
+        <result column="policy_id" property="policyId"/>
+        <result column="status" property="status"/>
+        <result column="bid_amount" property="bidAmount"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, user_id, third_user_uuid, policy_id, status,
+    bid_amount,
+    is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="thirdUserUUID != null">
+            and third_user_uuid = #{thirdUserUUID}
+        </if>
+        <if test="policyId != null">
+            and policy_id = #{policyId}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+    </sql>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into ivuser_policy (user_id, third_user_uuid, policy_id,
+        status,bid_amount,
+        is_delete, create_time, update_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userId}, #{item.thirdUserUUID}, #{item.policyId},
+            #{item.status},
+            #{item.bidAmount},
+            #{item.isDelete}, #{item.createTime},#{item.updateTime})
+        </foreach>
+    </insert>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_policy
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.UserPolicy">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_policy
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <select id="selectExistsUserPolicyJoin" resultType="java.lang.Long">
+        select id
+        from t_loan_policy as a
+        where is_delete = 0
+        and exists
+        (
+        select id from ivuser_policy as b
+        where
+        a.id = b.policy_id
+        <if test="userPolicyStatus != null">
+            and b.status = #{userPolicyStatus}
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        and a.id = #{policyId}
+        )
+    </select>
+
+    <select id="selectUserPolicyCountJoin" resultType="java.lang.Integer">
+        select count(*)
+        from t_loan_policy as a
+        where is_delete = 0
+        <if test="policyType != null">
+            and policy_type = #{policyType}
+        </if>
+        and status = 1
+        and exists(
+        select b.id from ivuser_policy as b inner join ivuser_third_bind_info as c
+        on b.third_user_uuid = c.thrid_user_uuid
+        and b.user_id = c.user_id
+        where a.id = b.policy_id
+        and b.is_delete = 0
+        <if test="userId != null">
+            and b.user_id = #{userId}
+        </if>
+        <if test="userPolicyStatus != null">
+            and b.status = #{userPolicyStatus}
+        </if>
+        )
+    </select>
+
+    <select id="selectThirdMainSubPolicyList" resultMap="BaseResultMap">
+        select a.user_id as user_id,a.third_user_uuid as third_user_uuid,b.id as user_policy_id,policy_id
+        from ivuser_main_policy as a left join ivuser_policy as b
+        on a.user_id = b.user_id and a.third_user_uuid = b.third_user_uuid
+        where a.main_policy_id = #{mainPolicyId}
+        and a.user_id = #{userId}
+        and a.status = 1
+    </select>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivuser.model.entity.UserPolicy">
+        update ivuser_policy
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="bidAmount != null">
+                bid_amount = #{bidAmount},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    update ivuser_policy set is_delete = #{isDelete},update_time = #{updateTime}
+    where id = #{id}
+    </delete>
+
+    <delete id="batchDeleteByPrimaryKeys" parameterType="java.lang.Long">
+        delete from ivuser_policy
+        where id in
+        <foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

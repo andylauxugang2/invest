@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd"
+    default-autowire="no" default-lazy-init="true">
+
+    <context:annotation-config/>
+
+    <context:component-scan base-package="com.invest.ivmanager.controller" />
+
+    <!--&lt;!&ndash; 会员系统网关 &ndash;&gt;
+    <context:component-scan base-package="com.invest.ivusergateway.controller"/>
+    &lt;!&ndash; 产品-ppd自动化投标系统 &ndash;&gt;
+    <context:component-scan base-package="com.invest.ivppdgateway.controller"/>
+    &lt;!&ndash; 产品-后台 &ndash;&gt;
+    <context:component-scan base-package="com.invest.ivgateway.controller"/>-->
+
+    <mvc:annotation-driven/>
+
+    <!-- 对静态资源文件的访问 -->
+    <mvc:resources location="/assets/" mapping="/assets/**" />
+
+    <mvc:default-servlet-handler/>
+
+    <!--<mvc:annotation-driven />-->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/xml;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 拦截器 -->
+    <!--<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"></mvc:mapping>
+            <mvc:exclude-mapping path="/userauth/callback"/>
+            <mvc:exclude-mapping path="/index"/>
+            <mvc:exclude-mapping path="/register"/>
+            <mvc:exclude-mapping path="/user/register"/>
+            <mvc:exclude-mapping path="/user/login"/>
+            <mvc:exclude-mapping path="/login"/>
+            <mvc:exclude-mapping path="/user/getSMSCode"/>
+            <mvc:exclude-mapping path="/**/*view"/>
+            <mvc:exclude-mapping path="/res/**"/>
+            <mvc:exclude-mapping path="/policy/getLoanProfitType"/>
+            <mvc:exclude-mapping path="/**/*html"/>
+            <mvc:exclude-mapping path="/user/changeHeadImg/**"/>
+            <bean class="com.invest.ivgateway.interceptor.SecurityInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>-->
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 表示用来解析request请求的默认编码格式，当没有指定的时候根据Servlet规范会使用默认值ISO-8859-1 -->
+        <property name="defaultEncoding" value="utf-8"></property>
+        <!-- 设置允许上传的最大文件大小，以字节为单位计算。当设为-1时表示无限制，默认是-1 upload size limit 31*1024*1024 -->
+        <property name="maxUploadSize" value="32505856"></property>
+        <!-- 设置在文件上传时允许写到内存中的最大值，以字节为单位计算，默认是10240 -->
+        <property name="maxInMemorySize" value="40960"></property>
+        <!--推迟文件解析，先在controller中抛出文件大小异常-->
+        <property name="resolveLazily" value="true"/>
+    </bean>
+
+    <!-- viewResolver -->
+    <import resource="classpath:/mvc/spring-viewResolver.xml" />
+
+</beans>

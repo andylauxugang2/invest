@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:reg="http://www.dangdang.com/schema/ddframe/reg"
+       xmlns:job="http://www.dangdang.com/schema/ddframe/job"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd 
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context.xsd 
+                        http://www.dangdang.com/schema/ddframe/reg 
+                        http://www.dangdang.com/schema/ddframe/reg/reg.xsd 
+                        http://www.dangdang.com/schema/ddframe/job 
+                        http://www.dangdang.com/schema/ddframe/job/job.xsd
+                        ">
+
+    <!-- Activates annotation-based bean configuration -->
+    <context:annotation-config />
+    <context:property-placeholder location="classpath:ivcommons.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <context:property-placeholder location="classpath:env_dev.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+
+    <!-- 基础数据 -->
+    <import resource="classpath:/spring-ivdata.xml" />
+
+    <!-- 通用中间件 ivpush -->
+    <context:component-scan base-package="com.invest.ivpush" />
+    <import resource="classpath:/ivpush/spring-datasource.xml" />
+    <import resource="classpath:/ivpush/mybatis.xml" />
+
+    <!-- 会员系统 -->
+    <context:property-placeholder location="classpath:ivuser.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+    <context:component-scan base-package="com.invest.ivuser.dao" />
+    <context:component-scan base-package="com.invest.ivuser.biz" />
+    <context:component-scan base-package="com.invest.ivuser.datacache" />
+    <bean class="com.invest.ivuser.util.KeyVersionUtils"/>
+
+    <import resource="classpath:/ivuser.config/ivuser-spring-datasource.xml" />
+    <import resource="classpath:/ivuser.config/mybatis.xml" />
+    <import resource="classpath:/ivuser.config/ivuser-spring-mq.xml" />
+
+    <!-- ppd api -->
+    <import resource="classpath:/spring-ivppd.xml" />
+
+    <!-- redis -->
+    <import resource="classpath:/redis/spring-redis.xml" />
+    <!-- spring restful -->
+    <import resource="classpath:/restful/spring-restful.xml" />
+    <import resource="classpath:/restful/spring-restful-ppdopenapi.xml" />
+
+    <context:component-scan base-package="com.zhuobao.ivsyncjob.biz"/>
+    <context:component-scan base-package="com.zhuobao.ivsyncjob.job.elastic"/>
+
+    <!-- 用逗号分隔集群多机器zk配置 -->
+    <reg:zookeeper id="regCenter" server-lists="${ivsync.job.elastic.zookeeper}"
+                   namespace="${ivsync.job.elastic.namespace}"
+                   base-sleep-time-milliseconds="1000" max-sleep-time-milliseconds="3000" max-retries="3"/>
+
+
+    <!-- 刷新accessToken -->
+    <!--<job:simple id="refreshAccessTokenJob" class="com.zhuobao.ivsyncjob.job.elastic.RefreshAccessTokenJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0/30 * * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="刷新accessToken定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 同步用户余额 -->
+    <!--<job:simple id="syncUserAccountInfoJob" class="com.zhuobao.ivsyncjob.job.elastic.SyncUserAccountInfoJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0/1 * * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="同步用户余额定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+    
+    <!-- 重试批量下载标的详情 -->
+    <!--<job:simple id="retryDownloadLoanDetailJob" class="com.zhuobao.ivsyncjob.job.elastic.RetryDownloadLoanDetailJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 0/1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="重试批量下载标的详情定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 批量下载标的还款计划 -->
+    <!--<job:simple id="downloadLenderRepaymentJob" class="com.zhuobao.ivsyncjob.job.elastic.DownloadLenderRepaymentJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 0/2 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="批量下载标的还款计划定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 批量同步[等待还款]还款计划 每天凌晨1点执行一次 -->
+    <!--<job:simple id="syncWaitingLenderRepaymentJob" class="com.zhuobao.ivsyncjob.job.elastic.SyncWaitingLenderRepaymentJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="批量同步[等待还款]还款计划定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 批量同步[逾期]还款计划 每天凌晨2点执行一次 -->
+    <!--<job:simple id="syncOverdueLenderRepaymentJob" class="com.zhuobao.ivsyncjob.job.elastic.SyncOverdueLenderRepaymentJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 2 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="批量同步[等待还款]还款计划定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 投标汇总数据任务 -->
+    <job:simple id="bidAnalysisJob" class="com.zhuobao.ivsyncjob.job.elastic.BidAnalysisJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="投标汇总数据定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>
+
+    <!-- 逾期分析汇总数据统计 每天凌晨1点执行一次 -->
+    <job:simple id="loanOverdueDetailAnalysisJob" class="com.zhuobao.ivsyncjob.job.elastic.LoanOverdueDetailAnalysisJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="逾期分析汇总数据统计定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>
+
+    <!-- 逾期分析汇总数据统计 每天凌晨1点执行一次 -->
+    <!--<job:simple id="CleanDataJob" class="com.zhuobao.ivsyncjob.job.elastic.CleanDataJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="清数据"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+
+    <!-- 逾期分析汇总-策略维度数据统计 每天凌晨1点执行一次 -->
+    <!--<job:simple id="loanOverdueDetailAnalysisPolicyJob" class="com.zhuobao.ivsyncjob.job.elastic.LoanOverdueDetailAnalysisPolicyJob"
+                registry-center-ref="regCenter" sharding-total-count="${ivsync.job.elastic.shardingTotalCount}" cron="0 0 1 * * ?"
+                sharding-item-parameters="" monitor-execution="${ivsync.job.elastic.monitorExecution}"
+                monitor-port="${ivsync.job.elastic.monitorPort}" failover="${ivsync.job.elastic.failover}" description="逾期分析汇总-策略维度数据统计定时"
+                disabled="${ivsync.job.elastic.disabled}" overwrite="${ivsync.job.elastic.overwrite}">
+    </job:simple>-->
+</beans>

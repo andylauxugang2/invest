@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.UserMainPolicyDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.UserMainPolicy">
+        <id column="id" property="id"/>
+        <result column="main_policy_id" property="mainPolicyId"/>
+        <result column="user_id" property="userId"/>
+        <result column="status" property="status"/>
+        <result column="third_user_uuid" property="thirdUserUUID"/>
+        <result column="amount_start" property="amountStart"/>
+        <result column="amount_max" property="amountMax"/>
+        <result column="account_remain" property="accountRemain"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="UserMainPolicyVOResultMap" type="com.invest.ivuser.model.vo.UserMainPolicyVO">
+        <id column="id" property="id"/>
+        <result column="main_policy_id" property="mainPolicyId"/>
+        <result column="name" property="name"/>
+        <result column="user_policy_id" property="userPolicyId"/>
+        <result column="third_user_uuid" property="thirdUserUUID"/>
+        <result column="user_policy_status" property="userPolicyStatus"/>
+        <result column="user_id" property="userId"/>
+        <result column="u_main_policy_create_time" property="userMainPolicyCreateTime"/>
+        <result column="amount_start" property="amountStart"/>
+        <result column="amount_max" property="amountMax"/>
+        <result column="account_remain" property="accountRemain"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, main_policy_id, user_id, status, third_user_uuid, amount_start, amount_max, account_remain,
+    is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="thirdUserUUID != null">
+            and third_user_uuid = #{thirdUserUUID}
+        </if>
+        <if test="mainPolicyId != null">
+            and main_policy_id = #{mainPolicyId}
+        </if>
+        <if test="status != null">
+            and status = #{status}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_main_policy
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.UserMainPolicy">
+        select
+        <include refid="Base_Column_List"/>
+        from ivuser_main_policy
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <select id="selectUserMainPolicy" resultMap="UserMainPolicyVOResultMap"
+            parameterType="com.invest.ivuser.model.entity.UserMainPolicy">
+        select a.id as main_policy_id,name,b.id as user_policy_id,b.status as user_policy_status,third_user_uuid,user_id,
+        b.create_time as u_main_policy_create_time
+        from t_main_policy as a left join ivuser_main_policy as b
+        on a.id = b.main_policy_id
+        and b.user_id = #{userId}
+        and third_user_uuid = #{thirdUserUUID}
+        and a.status = #{status}
+        and a.is_delete = 0
+        and b.is_delete = 0
+        order by a.id
+    </select>
+
+    <select id="selectUserMainPolicyByUniqueKey" resultMap="UserMainPolicyVOResultMap">
+        select a.id as user_policy_id,b.id as main_policy_id,a.status as user_policy_status,third_user_uuid,b.create_time as u_main_policy_create_time,
+        amount_start,amount_max, account_remain
+        from ivuser_main_policy as a left join t_main_policy as b
+        on a.main_policy_id = b.id
+        where 1=1
+        and a.is_delete = 0
+        and b.is_delete = 0
+        and a.user_id = #{userId}
+        and a.third_user_uuid = #{thirdUserUUID}
+        and b.id = #{mainPolicyId}
+        limit 1;
+    </select>
+
+    <select id="selectUserMainPolicyDetailList" resultMap="UserMainPolicyVOResultMap">
+        select user_id,a.id as user_policy_id,b.id as main_policy_id,a.status as
+        user_policy_status,third_user_uuid,b.create_time as u_main_policy_create_time,
+        amount_start,amount_max, account_remain
+        from ivuser_main_policy as a left join t_main_policy as b
+        on a.main_policy_id = b.id
+        where 1=1
+        and a.is_delete = 0
+        and b.is_delete = 0
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        <if test="thirdUserUUID != null">
+            and a.third_user_uuid = #{thirdUserUUID}
+        </if>
+        <if test="mainPolicyId != null">
+            and b.id = #{mainPolicyId}
+        </if>
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.UserMainPolicy">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ivuser_main_policy (main_policy_id, user_id, status, third_user_uuid,
+        amount_start, amount_max, account_remain,
+        is_delete, create_time, update_time)
+        values (#{mainPolicyId}, #{userId} ,#{status}, #{thirdUserUUID},
+        #{amountStart}, #{amountMax}, #{accountRemain},
+        #{isDelete},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivuser.model.entity.UserMainPolicy">
+        update ivuser_main_policy
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="amountStart != null">
+                amount_start = #{amountStart},
+            </if>
+            <if test="amountMax != null">
+                amount_max = #{amountMax},
+            </if>
+            <if test="accountRemain != null">
+                account_remain = #{accountRemain},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBySelective" parameterType="java.util.Map">
+        delete from ivuser_main_policy
+        where
+        user_id = #{userId}
+        and third_user_uuid = #{thirdUserUUID}
+        <if test="mainPolicyId != null">
+            and main_policy_id = #{mainPolicyId}
+        </if>
+    </delete>
+
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+	   default-autowire="no" default-lazy-init="true">
+
+	<!-- Activates annotation-based bean configuration -->
+	<context:annotation-config />
+
+	<context:property-placeholder location="classpath:*.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+
+	<!-- 通用中间件 ivpush -->
+	<context:component-scan base-package="com.invest.ivpush" />
+	<import resource="classpath:/ivpush/spring-datasource.xml" />
+	<import resource="classpath:/ivpush/mybatis.xml" />
+
+	<!-- 会员系统 -->
+	<context:property-placeholder location="classpath:ivuser.properties" ignore-unresolvable="true" file-encoding="utf-8"/>
+	<context:component-scan base-package="com.invest.ivuser" />
+	<bean class="com.invest.ivuser.util.KeyVersionUtils"/>
+	<import resource="classpath:/ivuser.config/ivuser-spring-datasource.xml" />
+	<import resource="classpath:/ivuser.config/mybatis.xml" />
+	<import resource="classpath:/ivuser.config/ivuser-spring-mq.xml" />
+
+	<!-- Scans for application @Components to deploy -->
+	<context:component-scan base-package="com.invest.ivmanager.biz" />
+
+	<!-- redis -->
+	<import resource="classpath:/redis/spring-redis.xml" />
+
+	<!-- mybatis -->
+	<import resource="classpath:/mybatis/mybatis.xml" />
+
+	<!-- spring mvc -->
+	<import resource="classpath:/mvc/spring-mvc.xml" />
+
+</beans>

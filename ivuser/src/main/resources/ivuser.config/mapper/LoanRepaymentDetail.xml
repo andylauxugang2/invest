@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.invest.ivuser.dao.db.LoanRepaymentDetailDAO">
+    <resultMap id="BaseResultMap" type="com.invest.ivuser.model.entity.LoanRepaymentDetail">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="listing_id" property="listingId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="due_date" property="dueDate"/>
+        <result column="repay_date" property="repayDate"/>
+        <result column="repay_principal" property="repayPrincipal"/>
+        <result column="repay_interest" property="repayInterest"/>
+        <result column="owing_principal" property="owingPrincipal"/>
+        <result column="owing_interest" property="owingInterest"/>
+        <result column="owing_overdue" property="owingOverdue"/>
+        <result column="overdue_days" property="overdueDays"/>
+        <result column="repay_status" property="repayStatus"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="OverdueTotalCountResultMap" type="com.invest.ivuser.model.entity.ext.OverdueTotalCount">
+        <result column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="overdue_count" property="overdueCount"/>
+    </resultMap>
+
+    <resultMap id="LoanRepaymentOverdueDetailMap" type="com.invest.ivuser.model.entity.ext.LoanRepaymentOverdueDetail">
+        <result column="user_id" property="userId"/>
+        <result column="username" property="username"/>
+        <result column="listing_id" property="listingId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="repay" property="repay"/>
+        <result column="owing" property="owing"/>
+        <result column="owing_overdue" property="owingOverdue"/>
+        <result column="overdue_days" property="overdueDays"/>
+        <result column="policy_id" property="policyId"/>
+        <result column="policy_name" property="policyName"/>
+        <result column="month" property="month"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="bid_amount" property="bidAmount"/>
+        <result column="bid_time" property="bidTime"/>
+        <result column="amount" property="amount"/>
+        <result column="rate" property="rate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id,username,listing_id, order_id, due_date,repay_date,
+        repay_principal,repay_interest,
+        owing_principal,owing_interest,owing_overdue,
+        overdue_days,repay_status,
+        is_delete, create_time, update_time
+    </sql>
+
+    <sql id="Condition_Base">
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="listingId != null">
+            and listing_id = #{listingId}
+        </if>
+        <if test="repayStatus != null">
+            and repay_status = #{repayStatus}
+        </if>
+        <if test="isDelete != null">
+            and is_delete = #{isDelete}
+        </if>
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_repayment_detail
+        where id = #{id}
+    </select>
+
+    <select id="selectListBySelective" resultMap="BaseResultMap"
+            parameterType="com.invest.ivuser.model.entity.LoanRepaymentDetail">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_repayment_detail
+        where 1=1
+        <include refid="Condition_Base"/>
+        order by id desc
+    </select>
+
+    <select id="selectListByQuery" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_repayment_detail
+        where 1=1
+        <if test="dueDateBegin != null">
+            and <![CDATA[due_date >= #{dueDateBegin}]]>
+        </if>
+        <if test="dueDateEnd != null">
+            and <![CDATA[due_date < #{dueDateEnd}]]>
+        </if>
+        <if test="repayStatusList != null">
+            and repay_status in
+            <foreach collection="repayStatusList" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="overdueDays != null">
+            and <![CDATA[overdue_days = #{overdueDays}]]>
+        </if>
+        order by listing_id
+    </select>
+
+    <select id="selectOverdueTotalCount" resultMap="OverdueTotalCountResultMap">
+        select user_id, username,count(*) as overdue_count from t_loan_repayment_detail
+        where 1=1
+        <if test="dueDateBegin != null">
+            and <![CDATA[due_date >= #{dueDateBegin}]]>
+        </if>
+        <if test="dueDateEnd != null">
+            and <![CDATA[due_date < #{dueDateEnd}]]>
+        </if>
+        <if test="repayStatusList != null">
+            and repay_status in
+            <foreach collection="repayStatusList" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="overdueDays != null">
+            and <![CDATA[overdue_days >= #{overdueDays}]]>
+        </if>
+        group by user_id, username
+        order by user_id,username;
+    </select>
+
+    <select id="selectOverdueDetail" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_repayment_detail
+        where 1=1
+        <if test="dueDateBegin != null">
+            and <![CDATA[due_date >= #{dueDateBegin}]]>
+        </if>
+        <if test="dueDateEnd != null">
+            and <![CDATA[due_date < #{dueDateEnd}]]>
+        </if>
+        <if test="repayStatusList != null">
+            and repay_status in
+            <foreach collection="repayStatusList" index="index" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="overdueDays != null">
+            and <![CDATA[overdue_days >= #{overdueDays}]]>
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="username != null">
+            and username = #{username}
+        </if>
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into t_loan_repayment_detail (
+        user_id,username,
+        listing_id, order_id, due_date,repay_date,
+        repay_principal,repay_interest,
+        owing_principal,owing_interest,owing_overdue,
+        overdue_days,repay_status,
+        is_delete, create_time, update_time)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.userId},#{item.username},
+            #{item.listingId},#{item.orderId},#{item.dueDate},#{item.repayDate},
+            #{item.repayPrincipal},#{item.repayInterest},
+            #{item.owingPrincipal},#{item.owingInterest},#{item.owingOverdue},
+            #{item.overdueDays},#{item.repayStatus},
+            #{item.isDelete},#{item.createTime},#{item.updateTime})
+        </foreach>
+    </insert>
+
+    <insert id="insert" parameterType="com.invest.ivuser.model.entity.LoanRepaymentDetail">
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into t_loan_repayment_detail (
+        user_id,username,
+        listing_id, order_id, due_date,repay_date,
+        repay_principal,repay_interest,
+        owing_principal,owing_interest,owing_overdue,
+        overdue_days,repay_status,
+        is_delete, create_time, update_time)
+        values
+        (#{userId},#{username},
+        #{listingId},#{orderId},#{dueDate},#{repayDate},
+        #{repayPrincipal},#{repayInterest},
+        #{owingPrincipal},#{owingInterest},#{owingOverdue},
+        #{overdueDays},#{repayStatus},
+        #{isDelete},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.invest.ivuser.model.entity.LoanRepaymentDetail">
+        update t_loan_repayment_detail
+        <set>
+            <if test="repayDate != null">
+                repay_date = #{repayDate},
+            </if>
+            <if test="repayPrincipal != null">
+                repay_principal = #{repayPrincipal},
+            </if>
+            <if test="repayInterest != null">
+                repay_interest = #{repayInterest},
+            </if>
+            <if test="owingPrincipal != null">
+                owing_principal = #{owingPrincipal},
+            </if>
+            <if test="owingInterest != null">
+                owing_interest = #{owingInterest},
+            </if>
+            <if test="owingOverdue != null">
+                owing_overdue = #{owingOverdue},
+            </if>
+            <if test="overdueDays != null">
+                overdue_days = #{overdueDays},
+            </if>
+            <if test="repayStatus != null">
+                repay_status = #{repayStatus},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+
+    <select id="selectRepeat" resultMap="BaseResultMap">
+        select user_id,username,listing_id,order_id,count(*) from t_loan_repayment_detail
+        where username = #{username}
+        group by user_id,username,listing_id,order_id
+        having count(*) > 1;
+    </select>
+    <select id="selectRepeatDetail" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_loan_repayment_detail
+        where user_id = #{userId} and username = #{username} and listing_id=#{listingId} and order_id=#{orderId} order by id
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from t_loan_repayment_detail
+        where id = #{id}
+    </delete>
+    <delete id="deleteRepeat">
+        delete from t_loan_repayment_detail
+        where id in
+        <foreach collection="ids" index="index" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
