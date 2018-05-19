@@ -19,6 +19,13 @@
 -- Table structure for table `ivuser_check_code`
 --
 
+CREATE SCHEMA `ivuser` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+use ivuser;
+
 DROP TABLE IF EXISTS `ivuser_check_code`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -545,8 +552,6 @@ ADD UNIQUE INDEX `unique_key` (`blacklist_value` ASC, `blacklist_type` ASC);
 ALTER TABLE `ivuser`.`t_bid_analysis`
 ADD COLUMN `overdue_principal` DOUBLE NULL DEFAULT 0 AFTER `overdue_90_days`;
 
-
---逾期分析
 CREATE TABLE `ivuser`.`t_loan_overdue_detail` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT(20) NOT NULL,

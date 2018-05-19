@@ -1,5 +1,10 @@
 CREATE SCHEMA `ivpay` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
 
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+use ivpay;
+
 CREATE TABLE `ivpay`.`t_product` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(128) NOT NULL,

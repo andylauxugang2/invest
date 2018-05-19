@@ -14,8 +14,12 @@
  Date: 08/01/2017 21:36:53 PM
 */
 
+CREATE SCHEMA `ivpush` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+use ivpush;
 
 -- ----------------------------
 --  Table structure for `ivpush_sms_log`
