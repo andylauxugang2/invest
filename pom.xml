@@ -1173,7 +1173,7 @@
                         </goals>
                         <configuration>
                             <!--relative path-->
-                            <output>${project.build.directory}/effective-pom/eakay-root-dependencies.xml</output>
+                            <output>${project.build.directory}/effective-pom/invest-root-dependencies.xml</output>
                         </configuration>
                     </execution>
                 </executions>
@@ -1193,7 +1193,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${project.build.directory}/effective-pom/eakay-root-dependencies.xml</file>
+                                    <file>${project.build.directory}/effective-pom/invest-root-dependencies.xml</file>
                                     <type>effective-pom</type>
                                 </artifact>
                             </artifacts>
