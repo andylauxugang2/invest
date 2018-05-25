@@ -178,7 +178,7 @@ public class HttpAsyncClientUtil {
     public static void main(String[] args) {
         try {
 
-            post("http://gw.open.ppdai.com/invest/LLoanInfoService/LoanList", null, null, new FutureCallback<HttpResponse>() {
+            post("https://gw.open.ppdai.com/invest/LLoanInfoService/LoanList", null, null, new FutureCallback<HttpResponse>() {
 
                 public void completed(final HttpResponse response) {
                     try {

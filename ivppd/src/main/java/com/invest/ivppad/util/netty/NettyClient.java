@@ -147,7 +147,7 @@ public class NettyClient {
     }
 
     public static void main(String args[]) throws HttpPostRequestEncoder.ErrorDataEncoderException, InterruptedException {
-        String url = "http://gw.open.ppdai.com/invest/LLoanInfoService/LoanList";
+        String url = "https://gw.open.ppdai.com/invest/LLoanInfoService/LoanList";
         Map<String, String> getData = new HashMap<>();
         getData.put("tags", "806:938356;");
         getData.put("sort", "_p");
